@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinguaVerse — Explore the World of Language & Linguistics</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #ff6b9d;
+    --purple: #a855f7;
+    --blue: #3b82f6;
+    --cyan: #06b6d4;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --orange: #f97316;
+    --red: #ef4444;
+    --bg: #0a0a1a;
+    --card: #12122a;
+    --card2: #1a1a35;
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f0ff;
+    --muted: rgba(240,240,255,0.55);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ANIMATED BACKGROUND */
+  .bg-blobs {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  }
+  .blob {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.18;
+    animation: blobFloat 12s ease-in-out infinite;
+  }
+  .blob1 { width: 500px; height: 500px; background: var(--purple); top: -100px; left: -100px; animation-delay: 0s; }
+  .blob2 { width: 400px; height: 400px; background: var(--pink); top: 30%; right: -100px; animation-delay: -4s; }
+  .blob3 { width: 350px; height: 350px; background: var(--cyan); bottom: 10%; left: 20%; animation-delay: -8s; }
+  @keyframes blobFloat {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(30px,-30px) scale(1.05); }
+    66% { transform: translate(-20px,20px) scale(0.95); }
+  }
+
+  /* LAYOUT */
+  .wrapper { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,26,0.8); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+  }
+  .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .nav-tabs { display: flex; gap: 4px; }
+  .nav-tab {
+    padding: 8px 16px; border-radius: 100px; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none; background: transparent; color: var(--muted);
+    transition: all 0.2s;
+  }
+  .nav-tab:hover { color: var(--text); background: var(--card2); }
+  .nav-tab.active { background: rgba(168,85,247,0.2); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+
+  /* HERO */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block; padding: 6px 16px; border-radius: 100px;
+    background: rgba(255,107,157,0.15); border: 1px solid rgba(255,107,157,0.3);
+    color: var(--pink); font-size: 13px; font-weight: 500; margin-bottom: 24px;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+  .hero h1 {
+    font-family: 'Syne', sans-serif; font-size: clamp(40px, 6vw, 72px); font-weight: 800; line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, var(--pink) 40%, var(--purple) 70%, var(--cyan) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px;
+  }
+  .hero p { font-size: 18px; color: var(--muted); max-width: 600px; margin: 0 auto 40px; line-height: 1.7; }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    padding: 14px 28px; border-radius: 100px; font-size: 15px; font-weight: 500;
+    background: linear-gradient(90deg, var(--pink), var(--purple));
+    color: white; border: none; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(168,85,247,0.4);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(168,85,247,0.5); }
+  .btn-secondary {
+    padding: 14px 28px; border-radius: 100px; font-size: 15px; font-weight: 500;
+    background: transparent; color: var(--text);
+    border: 1px solid var(--border); cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--card2); border-color: rgba(255,255,255,0.2); }
+
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 60px; }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px; text-align: center;
+  }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* SECTION */
+  .section { margin-bottom: 80px; }
+  .section-header { margin-bottom: 40px; }
+  .section-tag {
+    display: inline-block; padding: 4px 12px; border-radius: 100px;
+    font-size: 12px; font-weight: 500; margin-bottom: 12px;
+  }
+  .section-title { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+  .section-desc { color: var(--muted); font-size: 16px; max-width: 600px; line-height: 1.7; }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* CONCEPT CARDS GRID */
+  .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .concept-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+    padding: 28px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+  }
+  .concept-card::before {
+    content: ''; position: absolute; inset: 0; opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .concept-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.15); }
+  .concept-card:hover::before { opacity: 1; }
+  .card-icon { font-size: 36px; margin-bottom: 16px; display: block; }
+  .card-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .card-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+  .card-tag {
+    display: inline-block; margin-top: 16px; padding: 4px 12px; border-radius: 100px;
+    font-size: 12px; font-weight: 500;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+    z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: #16163a; border: 1px solid var(--border); border-radius: 24px;
+    padding: 40px; max-width: 640px; width: 100%; max-height: 85vh; overflow-y: auto;
+    transform: scale(0.9); transition: transform 0.3s;
+  }
+  .modal-overlay.open .modal { transform: scale(1); }
+  .modal-emoji { font-size: 48px; margin-bottom: 16px; }
+  .modal-title { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 16px; }
+  .modal-body { color: var(--muted); line-height: 1.8; font-size: 15px; }
+  .modal-body strong { color: var(--text); }
+  .modal-body .highlight-box {
+    background: rgba(168,85,247,0.1); border-left: 3px solid var(--purple);
+    border-radius: 8px; padding: 16px; margin: 16px 0; color: var(--text);
+  }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px; width: 36px; height: 36px;
+    border-radius: 50%; background: var(--card2); border: 1px solid var(--border);
+    color: var(--text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: rgba(239,68,68,0.2); border-color: var(--red); }
+  .example-list { list-style: none; margin: 12px 0; }
+  .example-list li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; display: flex; align-items: start; gap: 8px; }
+  .example-list li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  /* BRANCHES TREE */
+  .branches-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .branch-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px; transition: all 0.3s; cursor: pointer;
+  }
+  .branch-card:hover { transform: translateY(-3px); }
+  .branch-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 16px; }
+  .branch-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .branch-def { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  .branch-example { margin-top: 12px; padding: 10px 14px; border-radius: 10px; font-size: 13px; font-style: italic; }
+
+  /* QUIZ */
+  .quiz-container { max-width: 680px; margin: 0 auto; }
+  .quiz-progress { margin-bottom: 32px; }
+  .progress-bar-bg { background: var(--card2); border-radius: 100px; height: 8px; overflow: hidden; }
+  .progress-bar { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--pink), var(--purple)); transition: width 0.4s ease; }
+  .progress-text { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .quiz-question {
+    background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+    padding: 32px; margin-bottom: 24px;
+  }
+  .question-category { font-size: 12px; font-weight: 500; color: var(--purple); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+  .question-text { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; line-height: 1.4; }
+  .quiz-options { display: grid; gap: 12px; }
+  .quiz-option {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 22px; cursor: pointer; font-size: 15px; text-align: left;
+    transition: all 0.2s; display: flex; align-items: center; gap: 12px;
+  }
+  .quiz-option:hover { border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.08); }
+  .quiz-option.correct { border-color: var(--green); background: rgba(16,185,129,0.1); color: var(--green); }
+  .quiz-option.wrong { border-color: var(--red); background: rgba(239,68,68,0.1); color: var(--red); }
+  .quiz-option.disabled { pointer-events: none; opacity: 0.5; }
+  .quiz-option.correct.disabled { opacity: 1; }
+  .quiz-option.wrong.disabled { opacity: 1; }
+  .option-letter {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--card2);
+    display: flex; align-items: center; justify-content: center; font-size: 13px;
+    font-weight: 700; flex-shrink: 0;
+  }
+  .quiz-feedback {
+    padding: 20px 24px; border-radius: 16px; margin-bottom: 20px; display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); }
+  .quiz-feedback.wrong { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); }
+  .feedback-title { font-weight: 700; font-size: 16px; margin-bottom: 6px; }
+  .feedback-text { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .quiz-score {
+    background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+    padding: 48px; text-align: center; display: none;
+  }
+  .quiz-score.show { display: block; }
+  .score-emoji { font-size: 64px; margin-bottom: 16px; }
+  .score-num { font-family: 'Syne', sans-serif; font-size: 56px; font-weight: 800; background: linear-gradient(90deg, var(--pink), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .score-label { font-size: 20px; color: var(--muted); margin-bottom: 24px; }
+  .score-msg { font-size: 16px; color: var(--muted); max-width: 400px; margin: 0 auto 32px; line-height: 1.7; }
+
+  /* KARAKTERISTIK */
+  .karakteristik-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .kar-card {
+    border-radius: 20px; padding: 28px; position: relative; overflow: hidden;
+    cursor: pointer; transition: transform 0.3s;
+  }
+  .kar-card:hover { transform: translateY(-4px); }
+  .kar-num { font-family: 'Syne', sans-serif; font-size: 72px; font-weight: 800; opacity: 0.08; position: absolute; top: -10px; right: 20px; line-height: 1; }
+  .kar-icon { font-size: 32px; margin-bottom: 12px; }
+  .kar-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+  .kar-desc { font-size: 14px; line-height: 1.7; opacity: 0.85; }
+
+  /* FUN FACTS TICKER */
+  .ticker-wrapper { overflow: hidden; background: rgba(255,107,157,0.08); border: 1px solid rgba(255,107,157,0.2); border-radius: 12px; padding: 12px 0; margin-bottom: 40px; }
+  .ticker-inner { display: flex; gap: 48px; animation: ticker 30s linear infinite; white-space: nowrap; padding: 0 24px; }
+  .ticker-item { font-size: 14px; color: var(--pink); display: flex; align-items: center; gap: 8px; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--muted); font-size: 14px; }
+  footer strong { color: var(--text); }
+
+  /* GLOW TAG COLORS */
+  .tag-pink { background: rgba(255,107,157,0.15); color: var(--pink); border: 1px solid rgba(255,107,157,0.25); }
+  .tag-purple { background: rgba(168,85,247,0.15); color: var(--purple); border: 1px solid rgba(168,85,247,0.25); }
+  .tag-cyan { background: rgba(6,182,212,0.15); color: var(--cyan); border: 1px solid rgba(6,182,212,0.25); }
+  .tag-green { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+  .tag-amber { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); }
+  .tag-orange { background: rgba(249,115,22,0.15); color: var(--orange); border: 1px solid rgba(249,115,22,0.25); }
+  .tag-blue { background: rgba(59,130,246,0.15); color: var(--blue); border: 1px solid rgba(59,130,246,0.25); }
+  .tag-red { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+
+  .glow-pink { border-left: 3px solid var(--pink); }
+  .glow-purple { border-left: 3px solid var(--purple); }
+  .glow-cyan { border-left: 3px solid var(--cyan); }
+  .glow-green { border-left: 3px solid var(--green); }
+  .glow-amber { border-left: 3px solid var(--amber); }
+  .glow-blue { border-left: 3px solid var(--blue); }
+  .glow-orange { border-left: 3px solid var(--orange); }
+  .glow-red { border-left: 3px solid var(--red); }
+
+  @media (max-width: 640px) {
+    .stats { grid-template-columns: 1fr; }
+    .nav-tabs { display: none; }
+    .section-title { font-size: 28px; }
+    .hero h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-blobs">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">🌍 LinguaVerse</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('home')">🏠 Home</button>
+      <button class="nav-tab" onclick="showPage('konsep')">💡 Core Concepts</button>
+      <button class="nav-tab" onclick="showPage('karakteristik')">🔬 Characteristics</button>
+      <button class="nav-tab" onclick="showPage('branches')">🌿 Branches of Linguistics</button>
+      <button class="nav-tab" onclick="showPage('quiz')">🎮 Fun Quiz!</button>
+    </div>
+  </div>
+</nav>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div class="modal-emoji" id="modal-emoji"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="wrapper">
+
+<!-- ===== HOME PAGE ===== -->
+<div class="page active" id="page-home">
+  
+<div style="margin:30px 0;text-align:center;">
+<img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1200&auto=format&fit=crop"
+style="width:100%;max-width:1000px;border-radius:20px;">
+</div>
+
+<div class="hero">
+    <div class="hero-badge">✨ Learning Language Is Fun!</div>
+    <h1>Jelajahi Dunia<br>Bahasa & Linguistik</h1>
+    <p>Discover the wonders of human language — from the smallest phoneme to the most complex sentence. Learn while having fun, free for everyone!</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="showPage('konsep')">🚀 Start Learning</button>
+      <button class="btn-secondary" onclick="showPage('quiz')">🎮 Go Straight to Quiz!</button>
+    </div>
+  </div>
+
+  <div class="ticker-wrapper">
+    <div class="ticker-inner">
+      <span class="ticker-item">🌍 7,000+ languages in the world</span>
+      <span class="ticker-item">🧠 Humans are the only creatures with complex language</span>
+      <span class="ticker-item">👶 Babies learn language naturally without being taught grammar</span>
+      <span class="ticker-item">📖 Linguistics is the scientific study of language</span>
+      <span class="ticker-item">🔤 Language has a rule system called grammar</span>
+      <span class="ticker-item">🌐 Every language in the world has its own uniqueness</span>
+      <span class="ticker-item">🌍 7,000+ languages in the world</span>
+      <span class="ticker-item">🧠 Humans are the only creatures with complex language</span>
+      <span class="ticker-item">👶 Babies learn language naturally without being taught grammar</span>
+      <span class="ticker-item">📖 Linguistics is the scientific study of language</span>
+      <span class="ticker-item">🔤 Language has a rule system called grammar</span>
+      <span class="ticker-item">🌐 Every language in the world has its own uniqueness</span>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--pink)">3</div>
+      <div class="stat-label">Main Linguistics Topics</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--purple)">10+</div>
+      <div class="stat-label">Branches of Linguistics</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--cyan)">15</div>
+      <div class="stat-label">Interactive Quiz Questions</div>
+    </div>
+  </div>
+
+  <div class="concept-grid" style="margin-bottom:40px">
+    <div class="concept-card glow-pink" onclick="showPage('konsep')">
+      <span class="card-icon">💡</span>
+      <div class="card-title">Konsep Dasar Bahasa & Linguistik</div>
+      <div class="card-desc">What is language? What is linguistics? Why is human language unique? Find the answers here!</div>
+      <span class="card-tag tag-pink">Start here →</span>
+    </div>
+    <div class="concept-card glow-purple" onclick="showPage('karakteristik')">
+      <span class="card-icon">🔬</span>
+      <div class="card-title">Language Characteristics</div>
+      <div class="card-desc">7 unique properties of human language that set it apart from animal communication. Click to explore!</div>
+      <span class="card-tag tag-purple">Explore →</span>
+    </div>
+    <div class="concept-card glow-cyan" onclick="showPage('branches')">
+      <span class="card-icon">🌿</span>
+      <div class="card-title">Branches of Linguistics</div>
+      <div class="card-desc">Phonology, Morphology, Syntax... there are many branches of linguistics, each with an exciting story!</div>
+      <span class="card-tag tag-cyan">Explore →</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== KONSEP DASAR PAGE ===== -->
+<div class="page" id="page-konsep">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag tag-pink">Module 1</span>
+      <div class="section-title">💡 Core Concepts Bahasa & Linguistik</div>
+      <div class="section-desc">Before becoming a linguistics expert, let's understand what language and linguistics are from their roots!</div>
+    </div>
+
+    <div class="concept-grid">
+
+      <div class="concept-card glow-pink" onclick="openModal('bahasa')">
+        <span class="card-icon">🗣️</span>
+        <div class="card-title">What Is Language?</div>
+        <div class="card-desc">Language is more than just words. It is a complex, structured, and meaningful symbol system. Click to learn more!</div>
+        <span class="card-tag tag-pink">Click to read →</span>
+      </div>
+
+      <div class="concept-card glow-purple" onclick="openModal('linguistik')">
+        <span class="card-icon">🔭</span>
+        <div class="card-title">What Is Linguistics?</div>
+        <div class="card-desc">Linguistics is the scientific study of language — not just "learning a language," but understanding HOW language works.</div>
+        <span class="card-tag tag-purple">Click to read →</span>
+      </div>
+
+      <div class="concept-card glow-cyan" onclick="openModal('langue-parole')">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Langue vs Parole</div>
+        <div class="card-desc">Ferdinand de Saussure distinguished between the language system (langue) and actual language use (parole). What's the difference?</div>
+        <span class="card-tag tag-cyan">Click to read →</span>
+      </div>
+
+      <div class="concept-card glow-green" onclick="openModal('competence-performance')">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Competence vs Performance</div>
+        <div class="card-desc">Chomsky separated innate knowledge of language (competence) from its actual use (performance). Absolutely fascinating!</div>
+        <span class="card-tag tag-green">Click to read →</span>
+      </div>
+
+      <div class="concept-card glow-amber" onclick="openModal('tanda')">
+        <span class="card-icon">🔗</span>
+        <div class="card-title">Linguistic Sign</div>
+        <div class="card-desc">Every word consists of two sides: the signifier (sound) and signified (meaning). Their relationship is arbitrary!</div>
+        <span class="card-tag tag-amber">Click to read →</span>
+      </div>
+
+      <div class="concept-card glow-blue" onclick="openModal('fungsi')">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Functions of Language</div>
+        <div class="card-desc">Language has many functions: communication, self-expression, social regulation, and representation of the world. All are important!</div>
+        <span class="card-tag tag-blue">Click to read →</span>
+      </div>
+
+      <div class="concept-card glow-orange" onclick="openModal('manusia-hewan')">
+        <span class="card-icon">🆚</span>
+        <div class="card-title">Human Language vs Animal Communication</div>
+        <div class="card-desc">Do dolphins have "language"? Do bees "talk" with dances? What makes human language truly unique?</div>
+        <span class="card-tag tag-orange">Click to read →</span>
+      </div>
+
+      <div class="concept-card glow-red" onclick="openModal('sinkronik-diakronik')">
+        <span class="card-icon">⏳</span>
+        <div class="card-title">Synchronic vs Diachronic</div>
+        <div class="card-desc">Linguistics can study language at a single point in time (synchronic) or language change over time (diachronic).</div>
+        <span class="card-tag tag-red">Click to read →</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== KARAKTERISTIK PAGE ===== -->
+<div class="page" id="page-karakteristik">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag tag-purple">Module 2</span>
+      <div class="section-title">🔬 Characteristics Bahasa Manusia</div>
+      <div class="section-desc">Human language is no ordinary communication system. There are 7 unique characteristics that make it extraordinary!</div>
+    </div>
+
+    <div class="karakteristik-grid">
+
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(255,107,157,0.15),rgba(255,107,157,0.05)); border:1px solid rgba(255,107,157,0.25);" onclick="openModal('arbitrer')">
+        <div class="kar-num" style="color:var(--pink)">01</div>
+        <div class="kar-icon">🎲</div>
+        <div class="kar-title" style="color:var(--pink)">Arbitrary</div>
+        <div class="kar-desc">There is no natural connection between a word's sound and its meaning. "Dog" in Indonesian is "anjing" — why are they different?</div>
+      </div>
+
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(168,85,247,0.05)); border:1px solid rgba(168,85,247,0.25);" onclick="openModal('produktif')">
+        <div class="kar-num" style="color:var(--purple)">02</div>
+        <div class="kar-icon">♾️</div>
+        <div class="kar-title" style="color:var(--purple)">Productive</div>
+        <div class="kar-desc">From a finite set of words, you can create unlimited sentences. You can say something that has never been said before!</div>
+      </div>
+
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(6,182,212,0.15),rgba(6,182,212,0.05)); border:1px solid rgba(6,182,212,0.25);" onclick="openModal('duality')">
+        <div class="kar-num" style="color:var(--cyan)">03</div>
+        <div class="kar-icon">🔁</div>
+        <div class="kar-title" style="color:var(--cyan)">Duality</div>
+        <div class="kar-desc">Language has two layers: sounds (meaningless alone) & words (meaningful). "b", "a", "t" → "bat"! This is duality of patterning.</div>
+      </div>
+
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.05)); border:1px solid rgba(16,185,129,0.25);" onclick="openModal('displacement')">
+        <div class="kar-num" style="color:var(--green)">04</div>
+        <div class="kar-icon">🚀</div>
+        <div class="kar-title" style="color:var(--green)">Displacement</div>
+        <div class="kar-desc">You can talk about things far away — the past, the future, distant places, or even things that don't exist!</div>
+      </div>
+
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(245,158,11,0.05)); border:1px solid rgba(245,158,11,0.25);" onclick="openModal('cultural')">
+        <div class="kar-num" style="color:var(--amber)">05</div>
+        <div class="kar-icon">🎭</div>
+        <div class="kar-title" style="color:var(--amber)">Cultural Transmission</div>
+        <div class="kar-desc">Language is transmitted culturally, not biologically. An Indonesian child raised in Japan will speak Japanese!</div>
+      </div>
+
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(59,130,246,0.05)); border:1px solid rgba(59,130,246,0.25);" onclick="openModal('vocal')">
+        <div class="kar-num" style="color:var(--blue)">06</div>
+        <div class="kar-icon">🎵</div>
+        <div class="kar-title" style="color:var(--blue)">Vocal-Auditory</div>
+        <div class="kar-desc">By default, language uses the vocal-auditory channel. But sign language proves that modality can be different!</div>
+      </div>
+
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(249,115,22,0.15),rgba(249,115,22,0.05)); border:1px solid rgba(249,115,22,0.25);" onclick="openModal('interchangeable')">
+        <div class="kar-num" style="color:var(--orange)">07</div>
+        <div class="kar-icon">🔄</div>
+        <div class="kar-title" style="color:var(--orange)">Interchangeability</div>
+        <div class="kar-desc">Language speakers can act as both speaker and listener — unlike many animal communication systems!</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== BRANCHES PAGE ===== -->
+<div class="page" id="page-branches">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag tag-cyan">Module 3</span>
+      <div class="section-title">🌿 Branches of Linguistics</div>
+      <div class="section-desc">Linguistics is not a single science — it has many branches, each focusing on a different aspect of language!</div>
+    </div>
+
+    <div class="branches-container">
+
+      <div class="branch-card" onclick="openModal('fonologi')" style="border-left:3px solid var(--pink)">
+        <div class="branch-icon" style="background:rgba(255,107,157,0.15)">🔊</div>
+        <div class="branch-name" style="color:var(--pink)">Fonologi</div>
+        <div class="branch-def">Studies the sound system in language — how sounds function and interact with each other.</div>
+        <div class="branch-example" style="background:rgba(255,107,157,0.08); color:var(--pink)">Example: /p/ vs /b/ in "pin" and "bin" = different sounds, different meanings!</div>
+      </div>
+
+      <div class="branch-card" onclick="openModal('fonetik')" style="border-left:3px solid var(--purple)">
+        <div class="branch-icon" style="background:rgba(168,85,247,0.15)">🎙️</div>
+        <div class="branch-name" style="color:var(--purple)">Fonetik</div>
+        <div class="branch-def">Studies language sounds physically — production, acoustic transmission, and perception by the ear.</div>
+        <div class="branch-example" style="background:rgba(168,85,247,0.08); color:var(--purple)">Example: The vocal cords vibrate to produce voiced sounds</div>
+      </div>
+
+      <div class="branch-card" onclick="openModal('morfologi')" style="border-left:3px solid var(--cyan)">
+        <div class="branch-icon" style="background:rgba(6,182,212,0.15)">🧩</div>
+        <div class="branch-name" style="color:var(--cyan)">Morfologi</div>
+        <div class="branch-def">Studies the internal structure of words — how morphemes (smallest meaningful units) form words.</div>
+        <div class="branch-example" style="background:rgba(6,182,212,0.08); color:var(--cyan)">Example: "un-write-able" = un- + write + -able → 3 morphemes!</div>
+      </div>
+
+      <div class="branch-card" onclick="openModal('sintaksis')" style="border-left:3px solid var(--green)">
+        <div class="branch-icon" style="background:rgba(16,185,129,0.15)">🏗️</div>
+        <div class="branch-name" style="color:var(--green)">Sintaksis</div>
+        <div class="branch-def">Studies the rules for combining words into grammatical phrases, clauses, and sentences.</div>
+        <div class="branch-example" style="background:rgba(16,185,129,0.08); color:var(--green)">Example: "The cat eats fish" ✓ vs "Eats cat fish" — which sounds more natural?</div>
+      </div>
+
+      <div class="branch-card" onclick="openModal('semantik')" style="border-left:3px solid var(--amber)">
+        <div class="branch-icon" style="background:rgba(245,158,11,0.15)">💭</div>
+        <div class="branch-name" style="color:var(--amber)">Semantik</div>
+        <div class="branch-def">Studies meaning in language — the meaning of words, phrases, sentences, and relationships between meanings.</div>
+        <div class="branch-example" style="background:rgba(245,158,11,0.08); color:var(--amber)">Example: "thin" and "slim" both mean thin, but their contexts differ!</div>
+      </div>
+
+      <div class="branch-card" onclick="openModal('pragmatik')" style="border-left:3px solid var(--blue)">
+        <div class="branch-icon" style="background:rgba(59,130,246,0.15)">💬</div>
+        <div class="branch-name" style="color:var(--blue)">Pragmatik</div>
+        <div class="branch-def">Studies how context influences meaning — what is meant vs what is said.</div>
+        <div class="branch-example" style="background:rgba(59,130,246,0.08); color:var(--blue)">Example: "Can you open the window?" = a request, not a question about ability!</div>
+      </div>
+
+      <div class="branch-card" onclick="openModal('sosioling')" style="border-left:3px solid var(--orange)">
+        <div class="branch-icon" style="background:rgba(249,115,22,0.15)">👥</div>
+        <div class="branch-name" style="color:var(--orange)">Sosiolinguistik</div>
+        <div class="branch-def">Studies the relationship between language and society — language variation, diglossia, social identity.</div>
+        <div class="branch-example" style="background:rgba(249,115,22,0.08); color:var(--orange)">Example: Javanese has levels — ngoko, madya, krama!</div>
+      </div>
+
+      <div class="branch-card" onclick="openModal('psikoling')" style="border-left:3px solid var(--red)">
+        <div class="branch-icon" style="background:rgba(239,68,68,0.15)">🧠</div>
+        <div class="branch-name" style="color:var(--red)">Psikolinguistik</div>
+        <div class="branch-def">Studies the relationship between language and human cognitive/psychological processes — how we process language.</div>
+        <div class="branch-example" style="background:rgba(239,68,68,0.08); color:var(--red)">Example: Aphasia (brain damage) can selectively impair specific language abilities!</div>
+      </div>
+
+      <div class="branch-card" onclick="openModal('linguistik-historis')" style="border-left:3px solid var(--pink)">
+        <div class="branch-icon" style="background:rgba(255,107,157,0.15)">📜</div>
+        <div class="branch-name" style="color:var(--pink)">Linguistik Historis</div>
+        <div class="branch-def">Studies language change over time and the reconstruction of proto-languages (language ancestors).</div>
+        <div class="branch-example" style="background:rgba(255,107,157,0.08); color:var(--pink)">Example: Indonesian, Malay, Tagalog — all descended from Proto-Austronesian!</div>
+      </div>
+
+      <div class="branch-card" onclick="openModal('neurolinguistik')" style="border-left:3px solid var(--purple)">
+        <div class="branch-icon" style="background:rgba(168,85,247,0.15)">🔬</div>
+        <div class="branch-name" style="color:var(--purple)">Neurolinguistik</div>
+        <div class="branch-def">Studies how language is represented and processed in the human brain.</div>
+        <div class="branch-example" style="background:rgba(168,85,247,0.08); color:var(--purple)">Example: Broca's & Wernicke's Areas — two language centers in our brain!</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUIZ PAGE ===== -->
+<div class="page" id="page-quiz">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag tag-pink">Test Your Knowledge!</span>
+      <div class="section-title">🧠 Latihan Language Characteristics & Branches Linguistics</div>
+      <div class="section-desc">Done studying? Now it's time to prove it! Answer 15 questions about language and linguistics. Ready?</div>
+    </div>
+
+    <div class="quiz-container">
+      <div id="quiz-main">
+        <div class="quiz-progress">
+          <div class="progress-text">
+            <span id="q-counter">Question 1 of 15</span>
+            <span id="q-score-live">Score: 0</span>
+          </div>
+          <div class="progress-bar-bg"><div class="progress-bar" id="progress-bar" style="width:6.67%"></div></div>
+        </div>
+
+        <div class="quiz-question">
+          <div class="question-category" id="q-category">Konsep Dasar</div>
+          <div class="question-text" id="q-text">Loading question...</div>
+        </div>
+
+        <div class="quiz-options" id="quiz-options"></div>
+
+        <div class="quiz-feedback" id="quiz-feedback">
+          <div class="feedback-title" id="feedback-title"></div>
+          <div class="feedback-text" id="feedback-text"></div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; margin-top:20px;">
+          <button class="btn-primary" id="next-btn" onclick="nextQuestion()" style="display:none;">Soal Berikutnya →</button>
+        </div>
+      </div>
+
+      <div class="quiz-score" id="quiz-score">
+        <div class="score-emoji" id="score-emoji">🏆</div>
+        <div class="score-num" id="score-num">0</div>
+        <div class="score-label">out of 15 correct answers</div>
+        <div class="score-msg" id="score-msg"></div>
+        <button class="btn-primary" onclick="resetQuiz()" style="margin-right:12px;">🔄 Retry Quiz</button>
+        <button class="btn-secondary" onclick="showPage('konsep')">📚 Study Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrapper -->
+
+<footer>
+  <p>🌍 <strong>LinguaVerse</strong> — Platform Belajar Linguistik Gratis & Menyenangkan</p>
+  <p style="margin-top:8px">Made with ❤️ for all language learners around the world</p>
+</footer>
+
+<script>
+// ============== PAGE NAVIGATION ==============
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    if(t.getAttribute('onclick').includes("'"+id+"'")) t.classList.add('active');
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ============== MODAL DATA ==============
+const modalData = {
+  bahasa: {
+    emoji: '🗣️',
+    title: 'What Is Language?',
+    body: `<p>Language is an <strong>arbitrary system of vocal symbols</strong> used by members of a social group to communicate, interact, and identify themselves.</p>
+    <div class="highlight-box">💡 <strong>Simple definition:</strong> Language is a human communication tool that uses sounds or writing with specific rules.</div>
+    <p>Scholars define language in various ways:</p>
+    <ul class="example-list">
+      <li><strong>Ferdinand de Saussure</strong>: Language is a system of signs consisting of a signifier (sound-image) and a signified (concept).</li>
+      <li><strong>Noam Chomsky</strong>: Language is a set of sentences (finite or infinite) generated from finite rules.</li>
+      <li><strong>Edward Sapir</strong>: Language is a purely human, non-instinctive method of communicating ideas through voluntarily produced symbols.</li>
+    </ul>
+    <p style="margin-top:16px">What makes human language special: language has a <strong>hierarchical structure</strong> — from phonemes → morphemes → words → phrases → sentences → discourse.</p>`
+  },
+  linguistik: {
+    emoji: '🔭',
+    title: 'What Is Linguistics?',
+    body: `<p>Linguistics is <strong>the scientific study of language</strong>. Not about learning many languages, but understanding HOW language works — its structure, function, history, and its relationship to the mind & society.</p>
+    <div class="highlight-box">🧪 <strong>Linguistics = The Science of Language!</strong> Just as scientists study nature, linguists study language using scientific methods.</div>
+    <p><strong>Linguistics covers many big questions:</strong></p>
+    <ul class="example-list">
+      <li>How is language structured? (Phonology, Morphology, Syntax)</li>
+      <li>What do words and sentences mean? (Semantics, Pragmatics)</li>
+      <li>How does language change over time? (Historical Linguistics)</li>
+      <li>How is language processed by the brain? (Neurolinguistics)</li>
+      <li>How do language and society influence each other? (Sociolinguistics)</li>
+    </ul>
+    <p style="margin-top:16px"><strong>Key figures in linguistics:</strong> Ferdinand de Saussure (father of modern linguistics), Noam Chomsky (generative grammar), Roman Jakobson, Edward Sapir.</p>`
+  },
+  'langue-parole': {
+    emoji: '⚖️',
+    title: 'Langue vs Parole — Saussure',
+    body: `<p>Ferdinand de Saussure, the father of modern linguistics, distinguished two fundamental aspects of language:</p>
+    <div class="highlight-box">📚 <strong>Langue</strong>: The abstract, collective language system — the "rules of the game" shared by all speakers.<br><br>🗣️ <strong>Parole</strong>: The actual use of language by an individual in a concrete situation — each person plays differently!</div>
+    <p><strong>Simple analogy:</strong></p>
+    <ul class="example-list">
+      <li><strong>Langue</strong> = The rules of chess (apply to all players)</li>
+      <li><strong>Parole</strong> = An actual chess game (each player has a different style)</li>
+      <li><strong>Langue</strong> = A recipe (a fixed formula)</li>
+      <li><strong>Parole</strong> = The cooked dish (results can differ for each person)</li>
+    </ul>
+    <p style="margin-top:16px">Linguistics focuses on <strong>langue</strong> — the underlying system, not individual variation. Though parole is also interesting to study!</p>`
+  },
+  'competence-performance': {
+    emoji: '🧠',
+    title: 'Competence vs Performance — Chomsky',
+    body: `<p>Noam Chomsky (1965) distinguished two crucial concepts in generative linguistics:</p>
+    <div class="highlight-box">🧠 <strong>Linguistic Competence</strong>: A person's innate knowledge of their native language — the internalized mental grammar.<br><br>🎤 <strong>Linguistic Performance</strong>: Actual language use in real situations — can include slips of the tongue, pauses, errors, etc.</div>
+    <p><strong>Why does this matter?</strong></p>
+    <ul class="example-list">
+      <li>You know the sentence "I go to school" is grammatically correct, but you might sometimes mispronounce it → that's a performance error, not a competence error!</li>
+      <li>Chomsky argued that all humans are born with a <strong>Language Acquisition Device (LAD)</strong> — an innate ability to learn language.</li>
+      <li>Evidence: children worldwide learn their mother tongue quickly and without formal instruction!</li>
+    </ul>
+    <p style="margin-top:16px">Linguistics ideally studies <strong>competence</strong> — the ideal internal system, not performance which is full of noise.</p>`
+  },
+  tanda: {
+    emoji: '🔗',
+    title: 'Linguistic Sign',
+    body: `<p>Saussure described every linguistic sign as <strong>a two-sided sheet of paper</strong> that cannot be separated:</p>
+    <div class="highlight-box">🔊 <strong>Signifier</strong>: The sound-image — the acoustic impression we imagine when hearing/reading a word.<br><br>💭 <strong>Signified</strong>: The concept — the meaning or idea pointed to by the signifier.</div>
+    <p><strong>Properties of the linguistic sign:</strong></p>
+    <ul class="example-list">
+      <li><strong>Arbitrary</strong>: There is no natural connection between sound and meaning. "Tree," "arbre," and "Baum" = the same concept!</li>
+      <li><strong>Linear</strong>: Linguistic signs unfold in time — two words cannot be spoken simultaneously.</li>
+      <li><strong>Immutable</strong>: A single speaker cannot change the system — it must be collectively agreed upon.</li>
+      <li><strong>Mutable</strong>: Over time, word meanings can change (language evolution).</li>
+    </ul>`
+  },
+  fungsi: {
+    emoji: '🎯',
+    title: 'Fungsi-Functions of Language',
+    body: `<p>Roman Jakobson identified <strong>6 main functions of language</strong> in communication:</p>
+    <ul class="example-list">
+      <li><strong>Referential Function</strong>: Refers to the real world. "It is raining heavily today."</li>
+      <li><strong>Expressive Function</strong>: Expresses the speaker's feelings. "Oh, I'm so tired!"</li>
+      <li><strong>Conative Function</strong>: Influences the listener. "Close the door!"</li>
+      <li><strong>Phatic Function</strong>: Maintains social contact. "Hello! How are you?"</li>
+      <li><strong>Metalinguistic Function</strong>: Talking about language itself. "'Table' is a noun."</li>
+      <li><strong>Poetic/Aesthetic Function</strong>: Focuses on the message itself. Poetry, rhymes, slogans!</li>
+    </ul>
+    <div class="highlight-box">🎭 <strong>Other language functions:</strong> Group identity (in-group slang), behavioral regulation, collective memory (myths, folklore), and creativity!</div>`
+  },
+  'manusia-hewan': {
+    emoji: '🆚',
+    title: 'Human Language vs Animal Communication',
+    body: `<p>Animals communicate too! But is it "language"? According to Charles Hockett, human language has unique features not found in animal communication systems:</p>
+    <ul class="example-list">
+      <li><strong>Displacement</strong>: Humans can talk about things not present now. Bees can only "report" the location of flowers recently visited!</li>
+      <li><strong>Productivity</strong>: Humans can create unlimited new sentences. Animal communication is limited to fixed signals.</li>
+      <li><strong>Duality of Patterning</strong>: Human language has two levels — sounds & meaning. Animals do not.</li>
+      <li><strong>Cultural Transmission</strong>: Human language is learned culturally. Many animal communications are instinctive.</li>
+    </ul>
+    <div class="highlight-box">🐬 <strong>Fascinating!</strong> Chimpanzees can learn hundreds of sign language words, but cannot form complex sentences with grammatical rules. This supports Chomsky's theory that humans have a biologically unique language capacity!</div>`
+  },
+  'sinkronik-diakronik': {
+    emoji: '⏳',
+    title: 'Linguistik Synchronic vs Diachronic',
+    body: `<p>Saussure introduced two different approaches to studying language:</p>
+    <div class="highlight-box">📸 <strong>Synchronic Linguistics</strong>: Studying language at a single point in time — a "snapshot" of language now. Focuses on structure and system.<br><br>🎬 <strong>Diachronic Linguistics</strong>: Studying language change over time — a "film" of language evolution through the ages.</div>
+    <p><strong>Real examples:</strong></p>
+    <ul class="example-list">
+      <li><strong>Synchronic</strong>: Studying English grammar in 2024.</li>
+      <li><strong>Diachronic</strong>: Tracing how the word "nice" changed meaning over centuries.</li>
+      <li><strong>Diachronic</strong>: Proving that Malay, Indonesian, and Tagalog share a common ancestor — Proto-Austronesian.</li>
+    </ul>
+    <p style="margin-top:16px">Saussure prioritized the <strong>synchronic</strong> approach — because a language system can be understood without knowing its history!</p>`
+  },
+  arbitrer: {
+    emoji: '🎲',
+    title: 'Karakteristik 1: Arbitrary',
+    body: `<p>Arbitrariness is one of the most fundamental characteristics of human language: <strong>there is no natural connection between a word's sound and its meaning</strong>.</p>
+    <div class="highlight-box">🌍 The words "dog," "chien," "perro," "Hund," "anjing" — all refer to the same animal! Clear proof that the sound-meaning relationship is a social convention, not a natural law.</div>
+    <p><strong>Evidence of arbitrariness:</strong></p>
+    <ul class="example-list">
+      <li>Different languages have different words for the same concept</li>
+      <li>One sound can have different meanings in different languages</li>
+      <li>Word meanings can change without the sound changing ("nice" once meant foolish, now means pleasant)</li>
+    </ul>
+    <p style="margin-top:16px"><strong>Exception: Onomatopoeia!</strong> Words like "buzz," "splash," "click" imitate actual sounds — this is an exception to arbitrariness. But they still differ across languages: "meow" (English) vs "nyan" (Japanese)!</p>`
+  },
+  produktif: {
+    emoji: '♾️',
+    title: 'Karakteristik 2: Productive',
+    body: `<p>Productivity (also called Creativity or Generativity) means language speakers can <strong>produce and understand sentences they have never heard before</strong>.</p>
+    <div class="highlight-box">♾️ From ~170,000 words in English, you can create an unlimited number of sentences — even sentences that have never existed in the world!</div>
+    <p><strong>This differs from animal communication:</strong></p>
+    <ul class="example-list">
+      <li>Bees can only convey ~8 specific messages about food locations</li>
+      <li>Humans can create new sentences at any time: "The purple dragon from Mars loves eating instant noodles!"</li>
+      <li>Chomsky menyebut ini "infinite use of finite means" — penggunaan tak terbatas dari sarana yang terbatas</li>
+    </ul>`
+  },
+  duality: {
+    emoji: '🔁',
+    title: 'Characteristic 3: Duality of Patterning',
+    body: `<p>Duality of Patterning means human language has <strong>two distinct layers of organization</strong>:</p>
+    <div class="highlight-box">1️⃣ <strong>Primary Level (Phonological)</strong>: Sound units that are not meaningful on their own (phonemes) — /b/, /a/, /t/ ...<br><br>2️⃣ <strong>Secondary Level (Grammatical)</strong>: Combinations of sounds that form meaningful units (morphemes, words) — "bat", "tab", "tab"!</div>
+    <p><strong>Contoh dahsyat:</strong></p>
+    <ul class="example-list">
+      <li>/b/, /a/, /t/ — individually meaningless</li>
+      <li>But: "bat", "tab", "tab" → meaning emerges from combination!</li>
+      <li>With only ~44 phonemes, English can form hundreds of thousands of words!</li>
+    </ul>
+    <p style="margin-top:16px">No animal communication system has this kind of duality — this is what makes human language so efficient and productive!</p>`
+  },
+  displacement: {
+    emoji: '🚀',
+    title: 'Characteristic 4: Displacement',
+    body: `<p>Displacement means the ability of language to <strong>refer to things not physically present here and now</strong> — the past, the future, distant places, or imaginary things.</p>
+    <div class="highlight-box">🚀 You can talk about dinosaurs that lived millions of years ago, the distant planet Mars, unicorns that don't exist, or next year's holiday plans — all with language!</div>
+    <p><strong>This is what makes language so powerful:</strong></p>
+    <ul class="example-list">
+      <li><strong>The past</strong>: "My ancestors sailed across the vast oceans"</li>
+      <li><strong>Masa depan</strong>: "Tahun 2050, mungkin manusia sudah tinggal di Mars"</li>
+      <li><strong>Distant places</strong>: "At the edge of the world there are beautiful northern lights"</li>
+      <li><strong>Imaginary things</strong>: "Dragons breathe fire and fly over mountains"</li>
+      <li><strong>Konsep abstrak</strong>: "Keadilan, cinta, kebebasan, kebahagiaan..."</li>
+    </ul>
+    <p style="margin-top:16px">Bees can only "report" the location of flowers <em>just</em> visited. Humans can recount last night's dreams!</p>`
+  },
+  cultural: {
+    emoji: '🎭',
+    title: 'Karakteristik 5: Cultural Transmission',
+    body: `<p>Human language is transmitted <strong>culturally</strong>, not genetically or biologically. This means human babies are not born with a specific language already installed!</p>
+    <div class="highlight-box">🌏 Evidence: An Indonesian child adopted by a French family as a baby will grow up speaking perfect French — not Indonesian!</div>
+    <p><strong>Implications:</strong></p>
+    <ul class="example-list">
+      <li>Specific languages (English, French, Mandarin) are learned, not genetically inherited</li>
+      <li>However, the <em>capacity</em> to learn language — that is what is biologically inherited (Chomsky's theory: UG/LAD)</li>
+      <li>Unlike birdsong — certain birds have specific calls that are genetically "programmed"</li>
+    </ul>
+    <p style="margin-top:16px">This is also why languages can become <strong>extinct</strong> — if not taught to the next generation, they disappear forever. Currently about 3,000 languages are endangered!</p>`
+  },
+  vocal: {
+    emoji: '🎵',
+    title: 'Karakteristik 6: Saluran Vocal-Auditory',
+    body: `<p>By default, human language uses the <strong>vocal-auditory channel</strong> — produced by vocal organs (mouth, throat, lungs) and received by the ears.</p>
+    <div class="highlight-box">🎙️ Humans have a highly sophisticated vocal apparatus: vocal cords, tongue, teeth, lips, hard and soft palate — all working together to produce precise language sounds!</div>
+    <p><strong>But this is not the only modality:</strong></p>
+    <ul class="example-list">
+      <li><strong>Sign Language</strong>: ASL (American Sign Language), BSL (British Sign Language) — visual-gestural, just as complex as spoken language!</li>
+      <li><strong>Braille</strong>: A tactile modality for visually impaired readers</li>
+      <li><strong>Writing</strong>: A visual representation of language (only ~5,000 years old — very recent in evolutionary terms!)</li>
+    </ul>
+    <p style="margin-top:16px">Modern research shows that sign languages fulfill all characteristics of human language — processed by the same brain areas as spoken language. Language is not about the mouth, it's about the BRAIN!</p>`
+  },
+  interchangeable: {
+    emoji: '🔄',
+    title: 'Characteristic 7: Interchangeability',
+    body: `<p>Interchangeability means <strong>language speakers can alternate roles as both speaker and listener</strong> — they can both send and receive the same messages.</p>
+    <div class="highlight-box">💬 In a normal conversation, you can switch roles at any time: speaking now, listening a moment later — and the same message can be both sent and received!</div>
+    <p><strong>Unlike animal communication:</strong></p>
+    <ul class="example-list">
+      <li>Male peacocks perform courtship displays for females — but females do not perform the same display!</li>
+      <li>Worker bees perform a "dance" to communicate flower locations, but other bees do not dance back in response</li>
+      <li>Many animal signals are one-directional and gender/role-specific</li>
+    </ul>
+    <p style="margin-top:16px">This characteristic enables <strong>true dialogue</strong> — two people can build a conversation together, debate, negotiate, and share perspectives equally!</p>`
+  },
+  fonologi: {
+    emoji: '🔊',
+    title: 'Phonology — Science of Sound Systems',
+    body: `<p>Phonology studies <strong>language sounds as a system</strong> — how sounds function, interact, and distinguish meaning in a specific language.</p>
+    <div class="highlight-box">🔊 A <strong>phoneme</strong> is the smallest sound unit that distinguishes meaning. /p/ and /b/ are different phonemes because "pin" ≠ "bin"!</div>
+    <p><strong>Key concepts in phonology:</strong></p>
+    <ul class="example-list">
+      <li><strong>Phoneme</strong>: A meaning-distinguishing sound unit. English has about 24 consonant phonemes and 20 vowel phonemes.</li>
+      <li><strong>Allophone</strong>: A phoneme variant that does not change meaning. The aspirated [pʰ] in "pin" and unaspirated [p] in "spin" are allophones!</li>
+      <li><strong>Minimal Pairs</strong>: Two words differing in only one phoneme: "pin" vs "bin", "cat" vs "bat"</li>
+      <li><strong>Complementary Distribution</strong>: Two sounds that never appear in the same position</li>
+    </ul>
+    <p style="margin-top:16px"><strong>Phonology ≠ Phonetics!</strong> Phonetics studies sounds physically/acoustically, while phonology studies the function of sounds within the language system.</p>`
+  },
+  fonetik: {
+    emoji: '🎙️',
+    title: 'Phonetics — Science of Language Sounds',
+    body: `<p>Phonetics is the science that studies <strong>language sounds physically</strong> — how sounds are produced, transmitted, and perceived.</p>
+    <div class="highlight-box">🎙️ Phonetics is divided into three: <strong>Articulatory Phonetics</strong> (sound production), <strong>Acoustic Phonetics</strong> (sound waves), and <strong>Auditory Phonetics</strong> (sound perception by the ear).</div>
+    <p><strong>Articulatory Phonetics — how sounds are produced:</strong></p>
+    <ul class="example-list">
+      <li><strong>Bilabial Consonants</strong>: /p/, /b/, /m/ — both lips meet</li>
+      <li><strong>Dental/Alveolar Consonants</strong>: /t/, /d/, /n/ — the tongue touches the teeth/alveolar ridge</li>
+      <li><strong>Velar Consonants</strong>: /k/, /g/, /ŋ/ (ng) — the back of the tongue meets the velum</li>
+      <li><strong>Voiced vs Voiceless</strong>: /b/ is voiced (vocal cords vibrate), /p/ is voiceless</li>
+    </ul>
+    <p style="margin-top:16px">The IPA (International Phonetic Alphabet) is the international standard symbol system for writing all language sounds in the world!</p>`
+  },
+  morfologi: {
+    emoji: '🧩',
+    title: 'Morphology — Science of Word Structure',
+    body: `<p>Morphology studies the <strong>internal structure of words</strong> — how words are formed from the smallest meaningful units.</p>
+    <div class="highlight-box">🧩 A <strong>morpheme</strong> is the smallest grammatical unit with meaning. "Unhappy" = un- + happy → 2 morphemes!</div>
+    <p><strong>Types of morphemes:</strong></p>
+    <ul class="example-list">
+      <li><strong>Free Morphemes</strong>: Can stand alone. "book," "eat," "walk"</li>
+      <li><strong>Bound Morphemes</strong>: Must attach to another morpheme. un-, -ness, -ing, pre-, -tion</li>
+      <li><strong>English Affixes</strong>: Prefixes (un-, re-, pre-, dis-), Suffixes (-ness, -ing, -tion, -ly), Circumfixes (em-...-en)</li>
+    </ul>
+    <p><strong>Morphological processes:</strong></p>
+    <ul class="example-list">
+      <li><strong>Affixation</strong>: write → unwrite, written, writer, rewrite</li>
+      <li><strong>Reduplication</strong>: bye-bye, so-so, goody-goody</li>
+      <li><strong>Compounding</strong>: book + shelf = bookshelf</li>
+      <li><strong>Acronymy</strong>: Self-Contained Underwater Breathing Apparatus = SCUBA</li>
+    </ul>`
+  },
+  sintaksis: {
+    emoji: '🏗️',
+    title: 'Syntax — Science of Sentence Structure',
+    body: `<p>Syntax studies the <strong>rules for combining words into grammatical phrases, clauses, and sentences</strong>.</p>
+    <div class="highlight-box">🏗️ Syntax answers the question: why does "The cat eats fish" sound right but "Fish eats the cat" sound strange (even though it's technically understandable)?</div>
+    <p><strong>Key concepts in syntax:</strong></p>
+    <ul class="example-list">
+      <li><strong>Phrase</strong>: A group of words forming one unit. "the little child" = Noun Phrase</li>
+      <li><strong>Clause</strong>: A group of words with a subject + predicate. "the child runs"</li>
+      <li><strong>Syntactic functions</strong>: Subject (S), Predicate (P), Object (O), Complement, Adverbial</li>
+      <li><strong>Syntax Tree</strong>: A diagram showing the hierarchical structure of a sentence</li>
+      <li><strong>Active-Passive Sentences</strong>: "I eat the rice" ↔ "The rice is eaten (by me)"</li>
+    </ul>
+    <p style="margin-top:16px">Chomsky's <strong>Transformational Grammar</strong>: every sentence has a <em>deep structure</em> and a <em>surface structure</em> that can differ!</p>`
+  },
+  semantik: {
+    emoji: '💭',
+    title: 'Semantics — Science of Meaning',
+    body: `<p>Semantics studies <strong>meaning in language</strong> — the meaning of words, phrases, sentences, and meaning relationships between language elements.</p>
+    <div class="highlight-box">💭 Semantics asks: what does "love" mean? Why are "big" and "enormous" different? How can "Good morning!" mean different things in different contexts?</div>
+    <p><strong>Semantic concepts:</strong></p>
+    <ul class="example-list">
+      <li><strong>Synonyms</strong>: Words with similar meanings. "big" = "large" = "huge" — but they can't always be substituted!</li>
+      <li><strong>Antonyms</strong>: Words with opposite meanings. "hot" ↔ "cold", "alive" ↔ "dead"</li>
+      <li><strong>Homonyms</strong>: Same sound, different meaning. "bank" = financial institution / river bank</li>
+      <li><strong>Polysemy</strong>: One word with several related meanings. "head" = body part / head of school / headline</li>
+      <li><strong>Hyponymy</strong>: A word whose meaning is included in another word. "rose" is a hyponym of "flower"</li>
+    </ul>`
+  },
+  pragmatik: {
+    emoji: '💬',
+    title: 'Pragmatics — Language in Context',
+    body: `<p>Pragmatics studies how <strong>context influences meaning</strong> — what the speaker actually means, not just what is said literally.</p>
+    <div class="highlight-box">💬 "Can you pass the salt?" — literally this is a question about ability. But we all know it is a REQUEST! That's pragmatics.</div>
+    <p><strong>Key pragmatic concepts:</strong></p>
+    <ul class="example-list">
+      <li><strong>Speech Act</strong>: J.L. Austin: every utterance is an action — locutionary, illocutionary, perlocutionary act</li>
+      <li><strong>Cooperative Principle (Grice's Maxims)</strong>: Quantity, Quality, Relevance, Manner — the unwritten rules of conversation</li>
+      <li><strong>Implicature</strong>: Implied meaning, not explicit. "Have you eaten?" = showing care, not asking for data!</li>
+      <li><strong>Deixis</strong>: Words whose meaning depends on context. "this," "here," "now," "she" — pointing where/to whom?</li>
+      <li><strong>Politeness</strong>: How we manage face in social interaction</li>
+    </ul>`
+  },
+  sosioling: {
+    emoji: '👥',
+    title: 'Sosiolinguistik — Bahasa & Masyarakat',
+    body: `<p>Sociolinguistics studies the <strong>mutual relationship between language and society</strong> — how social factors influence language, and how language reflects social structure.</p>
+    <div class="highlight-box">👥 Why do people from New York speak differently from people from Texas? Why do you speak differently with your boss than with friends? Sociolinguistics has the answers!</div>
+    <p><strong>Sociolinguistic topics:</strong></p>
+    <ul class="example-list">
+      <li><strong>Language Variation</strong>: Dialect (regional), Sociolect (social class), Idiolect (individual)</li>
+      <li><strong>Diglossia</strong>: Using two different language varieties in the same community (formal English vs informal/slang)</li>
+      <li><strong>Code-Switching</strong>: Switching between languages in one conversation. "I have to go now, ¡hasta luego!"</li>
+      <li><strong>Bahasa & Identitas</strong>: Bahasa Jawa punya tingkatan krama-ngoko yang mencerminkan hierarki sosial</li>
+      <li><strong>Language Planning</strong>: National language policy — why did Indonesia choose Malay as the national language?</li>
+    </ul>`
+  },
+  psikoling: {
+    emoji: '🧠',
+    title: 'Psikolinguistik — Bahasa & Pikiran',
+    body: `<p>Psycholinguistics studies the <strong>relationship between language and human cognitive/psychological processes</strong> — how we acquire, process, produce, and understand language.</p>
+    <div class="highlight-box">🧠 How do babies learn language without formal schooling? How do we understand sentences in a flash? How can we make slips of the tongue? Psycholinguistics answers this!</div>
+    <p><strong>Psycholinguistic topics:</strong></p>
+    <ul class="example-list">
+      <li><strong>First Language Acquisition</strong>: Children go through universal stages — babbling, first words (~1 year), two words (~2 years), complex sentences (~4-5 years)</li>
+      <li><strong>Second Language Acquisition (SLA)</strong>: Why is it harder for adults to learn a second language? The Critical Period Hypothesis!</li>
+      <li><strong>Language Processing</strong>: How the brain parses long and ambiguous sentences in real time</li>
+      <li><strong>Language Disorders</strong>: Aphasia (brain injury), Dyslexia, Stuttering — evidence that language is a specific brain function</li>
+      <li><strong>Slips of the Tongue</strong>: "Freudian slips" — unintentional speech errors that can reveal mental processes!</li>
+    </ul>`
+  },
+  'linguistik-historis': {
+    emoji: '📜',
+    title: 'Historical Linguistics — Language through Time',
+    body: `<p>Historical Linguistics (also called Comparative or Diachronic Linguistics) studies <strong>language change throughout history</strong> and the genetic relationships between languages.</p>
+    <div class="highlight-box">📜 Language is always changing — slowly but surely. Old English (Beowulf, ~700 AD) is very different from the English we speak today!</div>
+    <p><strong>Historical linguistics topics:</strong></p>
+    <ul class="example-list">
+      <li><strong>Proto-Language Reconstruction</strong>: Proving that English, German, French, Latin, Greek — all related through Proto-Indo-European!</li>
+      <li><strong>Sound Change</strong>: Grimm's Law proved systematic sound changes in the Indo-European language family</li>
+      <li><strong>Meaning Change</strong>: "Silly" once meant blessed/happy, now means foolish. "Nice" once meant foolish, now means pleasant.</li>
+      <li><strong>Loanwords</strong>: English borrowed from French, Latin, Greek, Arabic, Norse — all absorbed!</li>
+      <li><strong>Language Tree</strong>: Classification of world languages into families/groups</li>
+    </ul>`
+  },
+  neurolinguistik: {
+    emoji: '🔬',
+    title: 'Neurolinguistik — Bahasa & Otak',
+    body: `<p>Neurolinguistics studies how <strong>language is represented, processed, and produced by the human brain</strong> — connecting linguistics with neuroscience.</p>
+    <div class="highlight-box">🔬 Two most important brain areas for language: <strong>Broca's Area</strong> (language production) in the left frontal lobe, and <strong>Wernicke's Area</strong> (language comprehension) in the left temporal lobe.</div>
+    <p><strong>Key neurolinguistics findings:</strong></p>
+    <ul class="example-list">
+      <li><strong>Lateralization</strong>: Language is primarily processed in the left hemisphere (for ~95% of right-handed people)</li>
+      <li><strong>Broca's Aphasia</strong>: Damage to Broca's Area → halting, effortful speech — but comprehension is relatively intact</li>
+      <li><strong>Wernicke's Aphasia</strong>: Damage to Wernicke's Area → fluent but incoherent speech, severely impaired comprehension</li>
+      <li><strong>fMRI & EEG</strong>: Teknologi modern memungkinkan kita "melihat" otak bekerja saat memproses bahasa secara real-time!</li>
+      <li><strong>Sign Language in the Brain</strong>: Sign language users activate the SAME brain areas as spoken language users — language is a brain function, not a mouth function!</li>
+    </ul>`
+  }
+};
+
+function openModal(key) {
+  const data = modalData[key];
+  if (!data) return;
+  document.getElementById('modal-emoji').textContent = data.emoji;
+  document.getElementById('modal-title').textContent = data.title;
+  document.getElementById('modal-body').innerHTML = data.body;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) closeModalBtn();
+}
+function closeModalBtn() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ============== QUIZ ==============
+const quizQuestions = [
+  { cat: 'Core Concepts', q: 'Who is called the "Father of Modern Linguistics" who introduced the concepts of langue and parole?', opts: ['Noam Chomsky', 'Ferdinand de Saussure', 'Edward Sapir', 'Roman Jakobson'], ans: 1, exp: 'Ferdinand de Saussure (1857–1913) is the father of modern linguistics who introduced the concepts of langue (language system) vs parole (language use), as well as the linguistic sign (signifier & signified).' },
+  { cat: 'Core Concepts', q: 'In Saussure\'s theory, the "signifier" refers to...', opts: ['The meaning or concept of a word', 'The sound-image or acoustic impression', 'The grammar of a language', 'The context of language use'], ans: 1, exp: 'The signifier is the "sound-image" — the acoustic impression we imagine when hearing or reading a word. The signified is the concept/meaning it points to.' },
+  { cat: 'Core Concepts', q: 'Noam Chomsky distinguished between "competence" and "performance." Which statement is correct?', opts: ['Competence = actual language use, Performance = language knowledge', 'Competence = internal language knowledge, Performance = actual language use', 'Both refer to the same thing', 'Competence = written language, Performance = spoken language'], ans: 1, exp: 'Linguistic competence is the innate knowledge of language (internalized mental grammar), while performance is actual language use which can include errors, slips of the tongue, etc.' },
+  { cat: 'Language Characteristics', q: 'The "arbitrary" nature of language means...', opts: ['Language always changes over time', 'There is no natural connection between sound and meaning', 'Language has strict rules', 'Language is biologically inherited'], ans: 1, exp: 'Arbitrariness means there is no natural connection between sound (signifier) and meaning (signified). Evidence: "dog," "chien," "perro" = the same creature but different sounds!' },
+  { cat: 'Language Characteristics', q: 'The bee "waggle dance" for showing flower locations lacks which human language characteristic?', opts: ['Vocal-Auditory', 'Displacement (past/future)', 'Interchangeability', 'Productivity'], ans: 1, exp: 'Bees can only "report" the location of flowers just visited — they cannot talk about flowers found yesterday or in locations not yet visited. This is displacement!' },
+  { cat: 'Language Characteristics', q: 'Duality of Patterning in language means...', opts: ['Language has two main dialects', 'Language has two layers: meaningless sounds & meaningful units', 'There are two types of grammar: active and passive', 'Language can be used written and spoken'], ans: 1, exp: 'Duality of patterning: Level 1 = phonemes (sounds not meaningful alone), Level 2 = morphemes/words (meaningful sound combinations). From ~44 English phonemes, we can create hundreds of thousands of words!' },
+  { cat: 'Branches of Linguistics', q: 'The branch of linguistics that studies the internal structure of words and word formation processes is called...', opts: ['Phonology', 'Morphology', 'Syntax', 'Semantics'], ans: 1, exp: 'Morphology studies morphemes (smallest meaningful units) and word formation processes such as affixation (un-happy), reduplication (bye-bye), and compounding (bookshelf).' },
+  { cat: 'Branches of Linguistics', q: '"Can you open the window?" is actually a request, not a question about ability. This is studied in...', opts: ['Semantics', 'Phonology', 'Pragmatics', 'Morphology'], ans: 2, exp: 'Pragmatics studies how context influences meaning — the difference between what is said (literal) and what is meant. This is known as speech act theory and implicature!' },
+  { cat: 'Branches of Linguistics', q: 'Broca\'s Area and Wernicke\'s Area are language centers in the brain studied in the field of...', opts: ['Sociolinguistics', 'Psycholinguistics', 'Neurolinguistics', 'Pragmatics'], ans: 2, exp: 'Neurolinguistics studies language representation in the brain. Broca\'s Area (language production) is in the left frontal lobe and Wernicke\'s Area (language comprehension) is in the left temporal lobe.' },
+  { cat: 'Branches of Linguistics', q: 'Javanese has krama and ngoko levels that reflect social status. This phenomenon is studied in...', opts: ['Phonetics', 'Historical Linguistics', 'Pragmatics', 'Sociolinguistics'], ans: 3, exp: 'Sociolinguistics studies the relationship between language and society. Javanese speech levels (ngoko, madya, krama) are examples of diglossia and language variation based on social hierarchy.' },
+  { cat: 'Phonology', q: 'The difference between /p/ and /b/ in "pin" vs "bin" proves that they are...', opts: ['Allophones', 'Different phonemes', 'Free variation', 'Different morphemes'], ans: 1, exp: 'Because /p/ and /b/ distinguish meaning ("pin" ≠ "bin"), they are different phonemes. If a sound difference does NOT change meaning, then they are called allophones.' },
+  { cat: 'Semantics & Pragmatics', q: 'The word "bank" in "She went to the bank" can mean a financial institution or a river bank. This is an example of...', opts: ['Synonymy', 'Antonymy', 'Homonymy', 'Hyponymy'], ans: 2, exp: 'A homonym is a word with the same sound but different (unrelated) meanings. "Bank" = financial institution / river bank. Different from polysemy where the meanings are still related.' },
+  { cat: 'Core Concepts', q: 'The linguistic approach that studies language at ONE specific point in time is called...', opts: ['Diachronic Linguistics', 'Synchronic Linguistics', 'Historical Linguistics', 'Comparative Linguistics'], ans: 1, exp: 'Synchronic (from Greek: syn = together, chronos = time) studies language at one specific moment — like a "photo" of language. Diachronic = language change over time (a "film").' },
+  { cat: 'Branches of Linguistics', q: 'The study of how babies acquire their first language belongs to the field of...', opts: ['Sociolinguistics', 'Phonetics', 'Psycholinguistics', 'Pragmatics'], ans: 2, exp: 'Psycholinguistics studies the relationship between language and cognitive processes, including Language Acquisition — how children acquire their first language through universal stages (babbling, first words, etc.)' },
+  { cat: 'Language Characteristics', q: 'An Indonesian child adopted by a French family as a baby will speak French. Which language characteristic does this prove?', opts: ['Arbitrariness', 'Productivity', 'Cultural Transmission', 'Displacement'], ans: 2, exp: 'Cultural Transmission — language is not biologically inherited, but learned through cultural exposure. What is biologically inherited is only the capacity to learn language (Language Acquisition Device).' }
+];
+
+let currentQ = 0, score = 0, answered = false;
+
+function renderQuestion() {
+  const q = quizQuestions[currentQ];
+  document.getElementById('q-counter').textContent = `Question ${currentQ+1} of ${quizQuestions.length}`;
+  document.getElementById('q-score-live').textContent = `Score: ${score}`;
+  document.getElementById('progress-bar').style.width = `${((currentQ+1)/quizQuestions.length)*100}%`;
+  document.getElementById('q-category').textContent = q.cat;
+  document.getElementById('q-text').textContent = q.q;
+  const letters = ['A','B','C','D'];
+  document.getElementById('quiz-options').innerHTML = q.opts.map((opt, i) =>
+    `<button class="quiz-option" onclick="answerQ(${i})">
+      <span class="option-letter">${letters[i]}</span> ${opt}
+    </button>`
+  ).join('');
+  document.getElementById('quiz-feedback').className = 'quiz-feedback';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+}
+
+function answerQ(idx) {
+  if (answered) return;
+  answered = true;
+  const q = quizQuestions[currentQ];
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.classList.add('disabled'));
+  const isCorrect = idx === q.ans;
+  if (isCorrect) {
+    score++;
+    opts[idx].classList.add('correct');
+    document.getElementById('q-score-live').textContent = `Score: ${score}`;
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+    opts[q.ans].classList.remove('disabled');
+  }
+  const fb = document.getElementById('quiz-feedback');
+  fb.className = `quiz-feedback show ${isCorrect ? 'correct' : 'wrong'}`;
+  document.getElementById('feedback-title').textContent = isCorrect ? '✅ Correct! Well done!' : '❌ Not quite...';
+  document.getElementById('feedback-text').textContent = q.exp;
+  document.getElementById('next-btn').style.display = 'block';
+  document.getElementById('next-btn').textContent = currentQ < quizQuestions.length - 1 ? 'Next Question →' : 'See Results! 🎉';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= quizQuestions.length) {
+    showResult(); return;
+  }
+  renderQuestion();
+}
+
+function showResult() {
+  document.getElementById('quiz-main').style.display = 'none';
+  const scoreEl = document.getElementById('quiz-score');
+  scoreEl.classList.add('show');
+  document.getElementById('score-num').textContent = score;
+  const pct = score / quizQuestions.length;
+  let emoji, msg;
+  if (pct >= 0.9) { emoji = '🏆'; msg = 'Outstanding! You are a true linguistics expert! A perfect score shows deep understanding of language. Your linguistic future is very bright!'; }
+  else if (pct >= 0.7) { emoji = '🌟'; msg = 'Excellent! You have mastered most linguistics concepts. A little more study and you will truly master it all!'; }
+  else if (pct >= 0.5) { emoji = '😊'; msg = 'Not bad! You already have a good foundation. Try reviewing the material on branches of linguistics and try again!'; }
+  else { emoji = '💪'; msg = 'Don\'t give up! Linguistics takes time to understand. Go back to the material, read carefully, and you can definitely do it!'; }
+  document.getElementById('score-emoji').textContent = emoji;
+  document.getElementById('score-msg').textContent = msg;
+}
+
+function resetQuiz() {
+  currentQ = 0; score = 0; answered = false;
+  document.getElementById('quiz-main').style.display = 'block';
+  document.getElementById('quiz-score').classList.remove('show');
+  renderQuestion();
+}
+
+// Init quiz
+renderQuestion();
+</script>
+</body>
+</html>
+
+<section style="padding:40px;margin:40px auto;background:#111827;border-radius:20px;color:white;">
+<h2 style="font-size:32px;margin-bottom:20px;">📚 Referensi Ahli & Jurnal Linguistik</h2>
+<table style="width:100%;border-collapse:collapse;">
+<tr style="background:#1f2937;">
+<th style="padding:12px;border:1px solid #374151;">Figure / Source</th>
+<th style="padding:12px;border:1px solid #374151;">Contribution</th>
+</tr>
+<tr>
+<td style="padding:12px;border:1px solid #374151;">Ferdinand de Saussure</td>
+<td style="padding:12px;border:1px solid #374151;">Bapak Linguistik Modern dan pencetus konsep langue & parole.</td>
+</tr>
+<tr>
+<td style="padding:12px;border:1px solid #374151;">Noam Chomsky</td>
+<td style="padding:12px;border:1px solid #374151;">Theory of generative grammar and competence vs performance.</td>
+</tr>
+<tr>
+<td style="padding:12px;border:1px solid #374151;">George Yule</td>
+<td style="padding:12px;border:1px solid #374151;">Penulis buku populer “The Study of Language”.</td>
+</tr>
+</table>
+
+<h3 style="margin-top:30px;">📖 Bibliography</h3>
+<ul style="line-height:2;">
+<li>Chomsky, N. (1965). <i>Aspects of the Theory of Syntax</i>.</li>
+<li>Saussure, F. (1916). <i>Course in General Linguistics</i>.</li>
+<li>Yule, G. (2020). <i>The Study of Language</i>.</li>
+<li>Wardhaugh, R. (2015). <i>An Introduction to Sociolinguistics</i>.</li>
+</ul>
+</section>
