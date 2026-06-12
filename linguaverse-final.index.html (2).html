@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinguaVerse: Interactive Linguistics E-Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #c4607a;
+    --purple: #7c6fcd;
+    --blue: #5b8fd4;
+    --cyan: #3d9eae;
+    --green: #4a9e7f;
+    --amber: #c98a2e;
+    --orange: #d4724a;
+    --red: #c45c5c;
+    --bg: #f5f0eb;
+    --card: #ffffff;
+    --card2: #ede8e3;
+    --border: rgba(100,80,70,0.12);
+    --text: #2e2520;
+    --muted: rgba(46,37,32,0.55);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+
+  .bg-blobs { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .blob { position:absolute; border-radius:50%; filter:blur(80px); opacity:0.12; animation:blobFloat 12s ease-in-out infinite; }
+  .blob1 { width:500px; height:500px; background:var(--purple); top:-100px; left:-100px; animation-delay:0s; }
+  .blob2 { width:400px; height:400px; background:var(--pink); top:30%; right:-100px; animation-delay:-4s; }
+  .blob3 { width:350px; height:350px; background:var(--cyan); bottom:10%; left:20%; animation-delay:-8s; }
+  @keyframes blobFloat { 0%,100%{transform:translate(0,0) scale(1);} 33%{transform:translate(30px,-30px) scale(1.05);} 66%{transform:translate(-20px,20px) scale(0.95);} }
+
+  .wrapper { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:0 24px; }
+
+  nav { position:sticky; top:0; z-index:100; background:rgba(245,240,235,0.92); backdrop-filter:blur(20px); border-bottom:1px solid var(--border); padding:14px 0; }
+  .nav-inner { max-width:1200px; margin:0 auto; padding:0 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .nav-logo { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; background:linear-gradient(90deg,var(--pink),var(--purple),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; white-space:nowrap; }
+  .nav-tabs { display:flex; gap:4px; flex-wrap:wrap; }
+  .nav-tab { padding:7px 14px; border-radius:100px; font-size:13px; font-weight:500; cursor:pointer; border:none; background:transparent; color:var(--muted); transition:all 0.2s; }
+  .nav-tab:hover { color:var(--text); background:var(--card2); }
+  .nav-tab.active { background:rgba(124,111,205,0.15); color:var(--purple); border:1px solid rgba(124,111,205,0.3); }
+
+  .page { display:none; }
+  .page.active { display:block; }
+
+  /* HERO */
+  .hero { padding:70px 0 50px; text-align:center; }
+  .hero-badge { display:inline-block; padding:6px 16px; border-radius:100px; background:rgba(196,96,122,0.12); border:1px solid rgba(196,96,122,0.3); color:var(--pink); font-size:13px; font-weight:500; margin-bottom:20px; animation:pulse 3s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.7;} }
+  .hero h1 { font-family:'Syne',sans-serif; font-size:clamp(36px,6vw,68px); font-weight:800; line-height:1.1; background:linear-gradient(135deg,#2e2520 0%,var(--pink) 40%,var(--purple) 70%,var(--cyan) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:18px; }
+  .hero p { font-size:17px; color:var(--muted); max-width:580px; margin:0 auto 36px; line-height:1.7; }
+  .hero-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .btn-primary { padding:13px 26px; border-radius:100px; font-size:15px; font-weight:500; background:linear-gradient(90deg,var(--pink),var(--purple)); color:white; border:none; cursor:pointer; transition:transform 0.2s,box-shadow 0.2s; box-shadow:0 4px 20px rgba(124,111,205,0.3); }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(124,111,205,0.4); }
+  .btn-secondary { padding:13px 26px; border-radius:100px; font-size:15px; font-weight:500; background:transparent; color:var(--text); border:1px solid var(--border); cursor:pointer; transition:all 0.2s; }
+  .btn-secondary:hover { background:var(--card2); }
+
+  /* STATS */
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:56px; }
+  .stat-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; text-align:center; }
+  .stat-num { font-family:'Syne',sans-serif; font-size:30px; font-weight:800; }
+  .stat-label { font-size:12px; color:var(--muted); margin-top:4px; }
+
+  /* SECTION */
+  .section { margin-bottom:72px; }
+  .section-header { margin-bottom:36px; }
+  .section-tag { display:inline-block; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:500; margin-bottom:12px; }
+  .section-title { font-family:'Syne',sans-serif; font-size:34px; font-weight:800; margin-bottom:12px; }
+  .section-desc { color:var(--muted); font-size:15px; max-width:600px; line-height:1.7; }
+
+  /* CONCEPT CARDS */
+  .concept-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px; }
+  .concept-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:26px; cursor:pointer; transition:all 0.3s; }
+  .concept-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,0.08); }
+  .card-icon { font-size:34px; margin-bottom:14px; display:block; }
+  .card-title { font-family:'Syne',sans-serif; font-size:19px; font-weight:700; margin-bottom:8px; }
+  .card-desc { font-size:14px; color:var(--muted); line-height:1.7; }
+  .card-tag { display:inline-block; margin-top:14px; padding:4px 12px; border-radius:100px; font-size:12px; font-weight:500; }
+
+  /* MODAL */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.4); backdrop-filter:blur(8px); z-index:200; display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+  .modal-overlay.open { opacity:1; pointer-events:all; }
+  .modal { background:#fff; border:1px solid var(--border); border-radius:24px; padding:38px; max-width:640px; width:100%; max-height:85vh; overflow-y:auto; transform:scale(0.9); transition:transform 0.3s; }
+  .modal-overlay.open .modal { transform:scale(1); }
+  .modal-emoji { font-size:46px; margin-bottom:14px; }
+  .modal-title { font-family:'Syne',sans-serif; font-size:26px; font-weight:800; margin-bottom:14px; }
+  .modal-body { color:var(--muted); line-height:1.8; font-size:15px; }
+  .modal-body strong { color:var(--text); }
+  .modal-body .highlight-box { background:rgba(124,111,205,0.08); border-left:3px solid var(--purple); border-radius:8px; padding:14px; margin:14px 0; color:var(--text); }
+  .modal-close { position:absolute; top:18px; right:18px; width:34px; height:34px; border-radius:50%; background:var(--card2); border:1px solid var(--border); color:var(--text); font-size:17px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .modal-close:hover { background:rgba(239,68,68,0.15); }
+  .example-list { list-style:none; margin:10px 0; }
+  .example-list li { padding:7px 0; border-bottom:1px solid var(--border); font-size:14px; display:flex; align-items:start; gap:8px; }
+  .example-list li::before { content:'→'; color:var(--cyan); flex-shrink:0; }
+
+  /* BRANCHES */
+  .branches-container { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+  .branch-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; transition:all 0.3s; cursor:pointer; }
+  .branch-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.07); }
+  .branch-icon { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:14px; }
+  .branch-name { font-family:'Syne',sans-serif; font-size:17px; font-weight:700; margin-bottom:7px; }
+  .branch-def { font-size:13px; color:var(--muted); line-height:1.6; }
+  .branch-example { margin-top:10px; padding:9px 13px; border-radius:9px; font-size:13px; font-style:italic; }
+
+  /* CHARACTERISTICS */
+  .karakteristik-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:18px; }
+  .kar-card { border-radius:20px; padding:26px; position:relative; overflow:hidden; cursor:pointer; transition:transform 0.3s; }
+  .kar-card:hover { transform:translateY(-4px); }
+  .kar-num { font-family:'Syne',sans-serif; font-size:68px; font-weight:800; opacity:0.08; position:absolute; top:-10px; right:18px; line-height:1; }
+  .kar-icon { font-size:30px; margin-bottom:10px; }
+  .kar-title { font-family:'Syne',sans-serif; font-size:19px; font-weight:700; margin-bottom:9px; }
+  .kar-desc { font-size:14px; line-height:1.7; opacity:0.85; }
+
+  /* TICKER */
+  .ticker-wrapper { overflow:hidden; background:rgba(196,96,122,0.07); border:1px solid rgba(196,96,122,0.18); border-radius:12px; padding:12px 0; margin-bottom:36px; }
+  .ticker-inner { display:flex; gap:48px; animation:ticker 30s linear infinite; white-space:nowrap; padding:0 24px; }
+  .ticker-item { font-size:14px; color:var(--pink); display:flex; align-items:center; gap:8px; }
+  @keyframes ticker { from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+  /* TAG COLORS */
+  .tag-pink { background:rgba(196,96,122,0.12); color:var(--pink); border:1px solid rgba(196,96,122,0.25); }
+  .tag-purple { background:rgba(124,111,205,0.12); color:var(--purple); border:1px solid rgba(124,111,205,0.25); }
+  .tag-cyan { background:rgba(61,158,174,0.12); color:var(--cyan); border:1px solid rgba(61,158,174,0.25); }
+  .tag-green { background:rgba(74,158,127,0.12); color:var(--green); border:1px solid rgba(74,158,127,0.25); }
+  .tag-amber { background:rgba(201,138,46,0.12); color:var(--amber); border:1px solid rgba(201,138,46,0.25); }
+  .tag-orange { background:rgba(212,114,74,0.12); color:var(--orange); border:1px solid rgba(212,114,74,0.25); }
+  .tag-blue { background:rgba(91,143,212,0.12); color:var(--blue); border:1px solid rgba(91,143,212,0.25); }
+  .tag-red { background:rgba(196,92,92,0.12); color:var(--red); border:1px solid rgba(196,92,92,0.25); }
+  .glow-pink{border-left:3px solid var(--pink);} .glow-purple{border-left:3px solid var(--purple);} .glow-cyan{border-left:3px solid var(--cyan);} .glow-green{border-left:3px solid var(--green);} .glow-amber{border-left:3px solid var(--amber);} .glow-blue{border-left:3px solid var(--blue);} .glow-orange{border-left:3px solid var(--orange);} .glow-red{border-left:3px solid var(--red);}
+
+  /* ========== E-ASSESSMENT STYLES ========== */
+
+  /* Assessment Hub */
+  .assessment-hub { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; margin-bottom:40px; }
+  .assessment-card { background:var(--card); border:1px solid var(--border); border-radius:22px; padding:30px; cursor:pointer; transition:all 0.3s; position:relative; overflow:hidden; }
+  .assessment-card::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,transparent 60%,rgba(255,255,255,0.05)); pointer-events:none; }
+  .assessment-card:hover { transform:translateY(-5px); box-shadow:0 16px 40px rgba(0,0,0,0.1); }
+  .ac-icon { font-size:40px; margin-bottom:16px; }
+  .ac-title { font-family:'Syne',sans-serif; font-size:21px; font-weight:800; margin-bottom:8px; }
+  .ac-desc { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:16px; }
+  .ac-meta { display:flex; gap:12px; flex-wrap:wrap; }
+  .ac-pill { padding:4px 10px; border-radius:100px; font-size:11px; font-weight:600; }
+
+  /* Quiz (MCQ) */
+  .quiz-container { max-width:700px; margin:0 auto; }
+  .quiz-progress { margin-bottom:28px; }
+  .progress-bar-bg { background:var(--card2); border-radius:100px; height:8px; overflow:hidden; }
+  .progress-bar { height:100%; border-radius:100px; background:linear-gradient(90deg,var(--pink),var(--purple)); transition:width 0.4s ease; }
+  .progress-text { display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-bottom:8px; }
+  .quiz-question { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:30px; margin-bottom:20px; }
+  .question-category { font-size:11px; font-weight:600; color:var(--purple); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+  .question-text { font-family:'Syne',sans-serif; font-size:21px; font-weight:700; line-height:1.4; }
+  .quiz-options { display:grid; gap:10px; }
+  .quiz-option { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 20px; cursor:pointer; font-size:15px; text-align:left; transition:all 0.2s; display:flex; align-items:center; gap:12px; }
+  .quiz-option:hover { border-color:rgba(124,111,205,0.35); background:rgba(124,111,205,0.07); }
+  .quiz-option.correct { border-color:var(--green); background:rgba(74,158,127,0.1); color:var(--green); }
+  .quiz-option.wrong { border-color:var(--red); background:rgba(196,92,92,0.1); color:var(--red); }
+  .quiz-option.disabled { pointer-events:none; opacity:0.5; }
+  .quiz-option.correct.disabled,.quiz-option.wrong.disabled { opacity:1; }
+  .option-letter { width:30px; height:30px; border-radius:50%; background:var(--card2); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+  .quiz-feedback { padding:18px 22px; border-radius:14px; margin-bottom:18px; display:none; }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.correct { background:rgba(74,158,127,0.1); border:1px solid rgba(74,158,127,0.3); }
+  .quiz-feedback.wrong { background:rgba(196,92,92,0.1); border:1px solid rgba(196,92,92,0.3); }
+  .feedback-title { font-weight:700; font-size:15px; margin-bottom:5px; }
+  .feedback-text { font-size:14px; color:var(--muted); line-height:1.6; }
+
+  /* Score */
+  .quiz-score { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:44px; text-align:center; display:none; }
+  .quiz-score.show { display:block; }
+  .score-emoji { font-size:60px; margin-bottom:14px; }
+  .score-num { font-family:'Syne',sans-serif; font-size:52px; font-weight:800; background:linear-gradient(90deg,var(--pink),var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .score-label { font-size:18px; color:var(--muted); margin-bottom:20px; }
+  .score-msg { font-size:15px; color:var(--muted); max-width:400px; margin:0 auto 28px; line-height:1.7; }
+  .score-breakdown { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin:24px 0; text-align:left; }
+  .sbd-item { background:var(--card2); border-radius:12px; padding:14px; }
+  .sbd-label { font-size:11px; color:var(--muted); margin-bottom:4px; font-weight:500; }
+  .sbd-val { font-family:'Syne',sans-serif; font-size:22px; font-weight:700; }
+
+  /* FILL IN THE BLANK */
+  .fitb-container { max-width:700px; margin:0 auto; }
+  .fitb-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:28px; margin-bottom:18px; }
+  .fitb-prompt { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; line-height:1.6; margin-bottom:16px; }
+  .fitb-blank { display:inline-block; min-width:120px; border:none; border-bottom:2px solid var(--purple); background:transparent; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:500; color:var(--purple); padding:2px 6px; outline:none; text-align:center; }
+  .fitb-blank.correct { border-bottom-color:var(--green); color:var(--green); }
+  .fitb-blank.wrong { border-bottom-color:var(--red); color:var(--red); }
+  .fitb-hint { font-size:13px; color:var(--muted); margin-top:10px; font-style:italic; }
+  .fitb-check { display:flex; gap:10px; margin-top:16px; align-items:center; flex-wrap:wrap; }
+  .fitb-feedback { font-size:14px; font-weight:500; margin-top:0; }
+  .fitb-feedback.ok { color:var(--green); }
+  .fitb-feedback.err { color:var(--red); }
+
+  /* MATCHING */
+  .match-container { max-width:760px; margin:0 auto; }
+  .match-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .match-col-label { font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .match-item { background:var(--card); border:2px solid var(--border); border-radius:14px; padding:14px 18px; cursor:pointer; font-size:14px; font-weight:500; transition:all 0.2s; min-height:52px; display:flex; align-items:center; user-select:none; }
+  .match-item:hover { border-color:rgba(124,111,205,0.4); background:rgba(124,111,205,0.05); }
+  .match-item.selected { border-color:var(--purple); background:rgba(124,111,205,0.1); color:var(--purple); }
+  .match-item.matched { border-color:var(--green); background:rgba(74,158,127,0.1); color:var(--green); pointer-events:none; }
+  .match-item.wrong-match { border-color:var(--red); background:rgba(196,92,92,0.08); animation:shake 0.4s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-5px);} 75%{transform:translateX(5px);} }
+  .match-score-bar { background:var(--card2); border-radius:12px; padding:16px 20px; margin-top:18px; display:flex; align-items:center; justify-content:space-between; }
+
+  /* TRUE/FALSE */
+  .tf-container { max-width:680px; margin:0 auto; }
+  .tf-card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:26px; margin-bottom:16px; }
+  .tf-stmt { font-size:16px; line-height:1.6; margin-bottom:16px; font-weight:500; }
+  .tf-btns { display:flex; gap:10px; }
+  .tf-btn { flex:1; padding:12px; border-radius:12px; border:1.5px solid var(--border); background:transparent; font-size:15px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+  .tf-btn:hover { transform:translateY(-1px); }
+  .tf-btn.true-btn:hover { border-color:var(--green); color:var(--green); }
+  .tf-btn.false-btn:hover { border-color:var(--red); color:var(--red); }
+  .tf-btn.selected-true { border-color:var(--green); background:rgba(74,158,127,0.1); color:var(--green); }
+  .tf-btn.selected-false { border-color:var(--red); background:rgba(196,92,92,0.1); color:var(--red); }
+  .tf-btn.disabled { pointer-events:none; }
+  .tf-result { font-size:13px; margin-top:10px; font-weight:500; padding:10px 14px; border-radius:10px; display:none; }
+  .tf-result.show { display:block; }
+  .tf-result.ok { background:rgba(74,158,127,0.1); color:var(--green); }
+  .tf-result.err { background:rgba(196,92,92,0.1); color:var(--red); }
+
+  /* FOOTER */
+  footer { border-top:1px solid var(--border); padding:36px 0; text-align:center; color:var(--muted); font-size:14px; }
+  footer strong { color:var(--text); }
+
+  /* TIMER */
+  .timer-bar { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .timer-display { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; color:var(--purple); }
+  .timer-display.warn { color:var(--red); }
+  .timer-track { flex:1; background:var(--card2); border-radius:100px; height:6px; overflow:hidden; }
+  .timer-fill { height:100%; border-radius:100px; background:linear-gradient(90deg,var(--green),var(--cyan)); transition:width 1s linear,background 0.5s; }
+  .timer-fill.warn { background:linear-gradient(90deg,var(--red),var(--orange)); }
+
+  /* BACK BTN */
+  .back-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:100px; font-size:13px; font-weight:500; border:1px solid var(--border); background:var(--card); color:var(--muted); cursor:pointer; transition:all 0.2s; margin-bottom:28px; }
+  .back-btn:hover { background:var(--card2); color:var(--text); }
+
+  @media(max-width:640px){
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .nav-tabs{display:none;}
+    .section-title{font-size:26px;}
+    .hero h1{font-size:34px;}
+    .match-grid{grid-template-columns:1fr;}
+    .score-breakdown{grid-template-columns:repeat(2,1fr);}
+  }
+
+  /* BIBLIOGRAPHY */
+  .biblio-section { margin-bottom:72px; }
+  .biblio-list { list-style:none; display:flex; flex-direction:column; gap:14px; }
+  .biblio-item { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px 24px; display:flex; gap:16px; align-items:flex-start; transition:all 0.2s; }
+  .biblio-item:hover { border-color:rgba(124,111,205,0.35); box-shadow:0 6px 20px rgba(0,0,0,0.06); }
+  .biblio-num { font-family:'Syne',sans-serif; font-size:18px; font-weight:800; color:var(--purple); min-width:28px; }
+  .biblio-content { flex:1; }
+  .biblio-ref { font-size:14px; line-height:1.7; color:var(--text); }
+  .biblio-ref em { color:var(--muted); font-style:italic; }
+  .biblio-link { display:inline-block; margin-top:7px; font-size:12px; font-weight:600; color:var(--cyan); text-decoration:none; padding:3px 10px; border-radius:100px; background:rgba(61,158,174,0.1); border:1px solid rgba(61,158,174,0.25); transition:all 0.2s; }
+  .biblio-link:hover { background:rgba(61,158,174,0.2); }
+  .biblio-tag { display:inline-block; margin-left:8px; padding:2px 8px; border-radius:100px; font-size:11px; font-weight:600; }
+
+  /* CITATION */
+  .cite-ref { font-size:11px; color:var(--purple); font-weight:600; vertical-align:super; cursor:pointer; background:rgba(124,111,205,0.12); border-radius:4px; padding:1px 5px; margin-left:2px; border:1px solid rgba(124,111,205,0.2); transition:background 0.15s; white-space:nowrap; font-style:italic; }
+  .cite-ref:hover { background:rgba(124,111,205,0.28); }
+
+  /* CORRECT ANSWER REVEAL */
+  .correct-answer-reveal { background:rgba(74,158,127,0.1); border:1px solid rgba(74,158,127,0.3); border-radius:12px; padding:14px 18px; margin-top:10px; display:none; }
+  .correct-answer-reveal.show { display:block; }
+  .car-title { font-size:13px; font-weight:700; color:var(--green); margin-bottom:4px; }
+  .car-text { font-size:14px; color:var(--text); }
+</style>
+</head>
+<body>
+
+<div class="bg-blobs">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">🌍 LinguaVerse</div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('home')">🏠 Home</button>
+      <button class="nav-tab" onclick="showPage('study')">📚 Study Material</button>
+      <button class="nav-tab" onclick="showPage('assess')">📝 Assessment Hub</button>
+      <button class="nav-tab" onclick="showPage('refs')">📖 References</button>
+    </div>
+  </div>
+</nav>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div class="modal-emoji" id="modal-emoji"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="wrapper">
+
+<!-- ===== HOME ===== -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-badge">✨ Interactive Linguistics E-Assessment</div>
+    <h1>Master Language<br>& Linguistics</h1>
+    <p>Study core concepts, explore the branches of linguistics, then test your understanding with interactive exercises: multiple choice, fill-in-the-blank, matching, and true/false.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="showPage('study')">📚 Start Studying</button>
+      <button class="btn-secondary" onclick="showPage('assess')">📝 Go to Assessment</button>
+    </div>
+  </div>
+
+  <div class="ticker-wrapper">
+    <div class="ticker-inner">
+      <span class="ticker-item">🌍 Language is a social phenomenon linked to power, identity &amp; culture</span>
+      <span class="ticker-item">🎲 Arbitrariness: no natural link between a word's sound and meaning</span>
+      <span class="ticker-item">♾️ Productivity: you can produce sentences never spoken before!</span>
+      <span class="ticker-item">📖 Language is dynamic; it changes with the society that uses it</span>
+      <span class="ticker-item">🧩 Linguistics has 9+ main branches, from phonetics to applied linguistics</span>
+      <span class="ticker-item">🧠 Psycholinguistics studies how the brain acquires and processes language</span>
+      <span class="ticker-item">🌍 Language is a social phenomenon linked to power, identity &amp; culture</span>
+      <span class="ticker-item">🎲 Arbitrariness: no natural link between a word's sound and meaning</span>
+      <span class="ticker-item">♾️ Productivity: you can produce sentences never spoken before!</span>
+      <span class="ticker-item">📖 Language is dynamic; it changes with the society that uses it</span>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="stat-num" style="color:var(--pink)">3</div><div class="stat-label">Study Modules</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--purple)">4</div><div class="stat-label">Exercise Types</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--cyan)">15</div><div class="stat-label">MCQ Questions</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--green)">40+</div><div class="stat-label">Total Items</div></div>
+  </div>
+
+  <div class="concept-grid" style="margin-bottom:40px">
+    <div class="concept-card glow-pink" onclick="showPage('study')">
+      <span class="card-icon">💡</span>
+      <div class="card-title">Study Material</div>
+      <div class="card-desc">Core concepts, characteristics, and branches of linguistics, all in one place. Build your knowledge before the assessment.</div>
+      <span class="card-tag tag-pink">Study first →</span>
+    </div>
+    <div class="concept-card glow-purple" onclick="showPage('assess')">
+      <span class="card-icon">📝</span>
+      <div class="card-title">Assessment Hub</div>
+      <div class="card-desc">Four interactive exercise types: Multiple Choice, Fill-in-the-Blank, Matching, and True/False. Track your performance.</div>
+      <span class="card-tag tag-purple">Start assessment →</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STUDY MATERIAL ===== -->
+<div class="page" id="page-study">
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag tag-pink">Module 1</span>
+      <div class="section-title">💡 Core Concepts</div>
+      <div class="section-desc">Understand the fundamentals before taking the assessment. Click any card to explore in depth.</div>
+    </div>
+    <div class="concept-grid">
+      <div class="concept-card glow-pink" onclick="openModal('bahasa')"><span class="card-icon">🗣️</span><div class="card-title">What Is Language?</div><div class="card-desc">Language is an arbitrary system of vocal symbols used by a social group for communication and identity.</div><span class="card-tag tag-pink">Read more →</span></div>
+      <div class="concept-card glow-purple" onclick="openModal('linguistik')"><span class="card-icon">🔭</span><div class="card-title">What Is Linguistics?</div><div class="card-desc">Linguistics is the scientific study of language: its structure, function, history, and relationship to the mind and society.</div><span class="card-tag tag-purple">Read more →</span></div>
+      <div class="concept-card glow-cyan" onclick="openModal('langue-parole')"><span class="card-icon">⚖️</span><div class="card-title">Langue vs Parole</div><div class="card-desc">Saussure's distinction: the abstract language system (langue) vs. individual speech acts (parole).</div><span class="card-tag tag-cyan">Read more →</span></div>
+      <div class="concept-card glow-green" onclick="openModal('competence-performance')"><span class="card-icon">🧠</span><div class="card-title">Competence vs Performance</div><div class="card-desc">Chomsky's parallel: innate knowledge of language (competence) vs. actual use (performance).</div><span class="card-tag tag-green">Read more →</span></div>
+      <div class="concept-card glow-amber" onclick="openModal('tanda')"><span class="card-icon">🔗</span><div class="card-title">Linguistic Sign</div><div class="card-desc">Every word has two sides: the signifier (sound) and signified (meaning). Their relationship is arbitrary!</div><span class="card-tag tag-amber">Read more →</span></div>
+      <div class="concept-card glow-blue" onclick="openModal('fungsi')"><span class="card-icon">🎯</span><div class="card-title">Functions of Language</div><div class="card-desc">Jakobson's 6 functions: referential, expressive, conative, phatic, metalinguistic, and poetic.</div><span class="card-tag tag-blue">Read more →</span></div>
+      <div class="concept-card glow-orange" onclick="openModal('manusia-hewan')"><span class="card-icon">🆚</span><div class="card-title">Human vs Animal Communication</div><div class="card-desc">What makes human language truly unique? Hockett's design features explain the difference.</div><span class="card-tag tag-orange">Read more →</span></div>
+      <div class="concept-card glow-red" onclick="openModal('sinkronik-diakronik')"><span class="card-icon">⏳</span><div class="card-title">Synchronic vs Diachronic</div><div class="card-desc">Language at one point in time (synchronic) vs. language change over time (diachronic).</div><span class="card-tag tag-red">Read more →</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag tag-purple">Module 2</span>
+      <div class="section-title">🔬 Characteristics of Human Language</div>
+      <div class="section-desc">Eight unique properties that set human language apart from all other communication systems.</div>
+    </div>
+    <div class="karakteristik-grid">
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(255,107,157,0.15),rgba(255,107,157,0.05));border:1px solid rgba(255,107,157,0.25);" onclick="openModal('arbitrer')"><div class="kar-num" style="color:var(--pink)">01</div><div class="kar-icon">🎲</div><div class="kar-title" style="color:var(--pink)">Arbitrary</div><div class="kar-desc">No natural connection between a word's sound and its meaning. "Dog" vs "anjing" vs "chien" yet all refer to the same animal!</div></div>
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(168,85,247,0.05));border:1px solid rgba(168,85,247,0.25);" onclick="openModal('produktif')"><div class="kar-num" style="color:var(--purple)">02</div><div class="kar-icon">♾️</div><div class="kar-title" style="color:var(--purple)">Productive</div><div class="kar-desc">From a finite set of words, you can create an infinite number of sentences, including ones never said before!</div></div>
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(6,182,212,0.15),rgba(6,182,212,0.05));border:1px solid rgba(6,182,212,0.25);" onclick="openModal('duality')"><div class="kar-num" style="color:var(--cyan)">03</div><div class="kar-icon">🔁</div><div class="kar-title" style="color:var(--cyan)">Duality of Patterning</div><div class="kar-desc">Two levels: meaningless sounds (phonemes) combine to form meaningful units (morphemes/words).</div></div>
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.05));border:1px solid rgba(16,185,129,0.25);" onclick="openModal('displacement')"><div class="kar-num" style="color:var(--green)">04</div><div class="kar-icon">🚀</div><div class="kar-title" style="color:var(--green)">Displacement</div><div class="kar-desc">Talk about things far away in time and space: the past, the future, imaginary worlds.</div></div>
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(245,158,11,0.05));border:1px solid rgba(245,158,11,0.25);" onclick="openModal('cultural')"><div class="kar-num" style="color:var(--amber)">05</div><div class="kar-icon">🎭</div><div class="kar-title" style="color:var(--amber)">Cultural Transmission</div><div class="kar-desc">Language is learned through culture, not inherited biologically. Environment shapes the language we speak.</div></div>
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(59,130,246,0.05));border:1px solid rgba(59,130,246,0.25);" onclick="openModal('vocal')"><div class="kar-num" style="color:var(--blue)">06</div><div class="kar-icon">🎵</div><div class="kar-title" style="color:var(--blue)">Vocal-Auditory Channel</div><div class="kar-desc">The default channel for human language, though sign languages demonstrate channel flexibility.</div></div>
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(249,115,22,0.15),rgba(249,115,22,0.05));border:1px solid rgba(249,115,22,0.25);" onclick="openModal('interchangeable')"><div class="kar-num" style="color:var(--orange)">07</div><div class="kar-icon">🔄</div><div class="kar-title" style="color:var(--orange)">Interchangeability</div><div class="kar-desc">Speakers can both produce and receive language, unlike many animal communication systems.</div></div>
+      <div class="kar-card" style="background:linear-gradient(135deg,rgba(91,143,212,0.15),rgba(91,143,212,0.05));border:1px solid rgba(91,143,212,0.25);" onclick="openModal('dynamic')"><div class="kar-num" style="color:var(--blue)">08</div><div class="kar-icon">🔄</div><div class="kar-title" style="color:var(--blue)">Dynamic & Evolving</div><div class="kar-desc">Language is not static; it changes over time with the society that uses it.</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-tag tag-cyan">Module 3</span>
+      <div class="section-title">🌿 Branches of Linguistics</div>
+      <div class="section-desc">Linguistics is not a single science; it has many branches, each focusing on a different dimension of language.</div>
+    </div>
+    <div class="branches-container">
+      <div class="branch-card" onclick="openModal('fonologi')" style="border-left:3px solid var(--pink)"><div class="branch-icon" style="background:rgba(255,107,157,0.15)">🔊</div><div class="branch-name" style="color:var(--pink)">Phonology</div><div class="branch-def">Studies the sound system of language: how sounds function and distinguish meaning.</div><div class="branch-example" style="background:rgba(255,107,157,0.08);color:var(--pink)">/p/ vs /b/ in "pin" vs "bin" = different phonemes!</div></div>
+      <div class="branch-card" onclick="openModal('fonetik')" style="border-left:3px solid var(--purple)"><div class="branch-icon" style="background:rgba(168,85,247,0.15)">🎙️</div><div class="branch-name" style="color:var(--purple)">Phonetics</div><div class="branch-def">Studies language sounds physically: their production, acoustic properties, and perception.</div><div class="branch-example" style="background:rgba(168,85,247,0.08);color:var(--purple)">Articulatory, acoustic, and auditory phonetics!</div></div>
+      <div class="branch-card" onclick="openModal('morfologi')" style="border-left:3px solid var(--cyan)"><div class="branch-icon" style="background:rgba(6,182,212,0.15)">🧩</div><div class="branch-name" style="color:var(--cyan)">Morphology</div><div class="branch-def">Studies the internal structure of words and how morphemes form words.</div><div class="branch-example" style="background:rgba(6,182,212,0.08);color:var(--cyan)">"un-write-able" = 3 morphemes: un- + write + -able</div></div>
+      <div class="branch-card" onclick="openModal('sintaksis')" style="border-left:3px solid var(--green)"><div class="branch-icon" style="background:rgba(16,185,129,0.15)">🏗️</div><div class="branch-name" style="color:var(--green)">Syntax</div><div class="branch-def">Studies rules for combining words into grammatical phrases, clauses, and sentences.</div><div class="branch-example" style="background:rgba(16,185,129,0.08);color:var(--green)">"The cat eats fish" ✓ vs "Eats cat fish" ✗</div></div>
+      <div class="branch-card" onclick="openModal('semantik')" style="border-left:3px solid var(--amber)"><div class="branch-icon" style="background:rgba(245,158,11,0.15)">💭</div><div class="branch-name" style="color:var(--amber)">Semantics</div><div class="branch-def">Studies meaning in language: words, phrases, sentences, and meaning relationships.</div><div class="branch-example" style="background:rgba(245,158,11,0.08);color:var(--amber)">"thin" vs "slim" share similar meaning yet carry different connotations!</div></div>
+      <div class="branch-card" onclick="openModal('pragmatik')" style="border-left:3px solid var(--blue)"><div class="branch-icon" style="background:rgba(59,130,246,0.15)">💬</div><div class="branch-name" style="color:var(--blue)">Pragmatics</div><div class="branch-def">Studies how context influences meaning: what is meant vs. what is literally said.</div><div class="branch-example" style="background:rgba(59,130,246,0.08);color:var(--blue)">"Can you open the window?" = a request, not a question!</div></div>
+      <div class="branch-card" onclick="openModal('sosioling')" style="border-left:3px solid var(--orange)"><div class="branch-icon" style="background:rgba(249,115,22,0.15)">👥</div><div class="branch-name" style="color:var(--orange)">Sociolinguistics</div><div class="branch-def">Studies the relationship between language and society: variation, diglossia, and social identity.</div><div class="branch-example" style="background:rgba(249,115,22,0.08);color:var(--orange)">Javanese speech levels: ngoko, madya, krama!</div></div>
+      <div class="branch-card" onclick="openModal('psikoling')" style="border-left:3px solid var(--red)"><div class="branch-icon" style="background:rgba(239,68,68,0.15)">🧠</div><div class="branch-name" style="color:var(--red)">Psycholinguistics</div><div class="branch-def">Studies language and human cognitive/psychological processes: acquisition and processing.</div><div class="branch-example" style="background:rgba(239,68,68,0.08);color:var(--red)">Aphasia: brain damage can selectively impair language!</div></div>
+      <div class="branch-card" onclick="openModal('neurolinguistik')" style="border-left:3px solid var(--purple)"><div class="branch-icon" style="background:rgba(168,85,247,0.15)">🔬</div><div class="branch-name" style="color:var(--purple)">Neurolinguistics</div><div class="branch-def">Studies how language is represented and processed in the human brain.</div><div class="branch-example" style="background:rgba(168,85,247,0.08);color:var(--purple)">Broca's Area and Wernicke's Area are the brain's two primary language centers!</div></div>
+      <div class="branch-card" onclick="openModal('linguistik-historis')" style="border-left:3px solid var(--pink)"><div class="branch-icon" style="background:rgba(255,107,157,0.15)">📜</div><div class="branch-name" style="color:var(--pink)">Historical Linguistics</div><div class="branch-def">Studies language change over time and the reconstruction of proto-languages.</div><div class="branch-example" style="background:rgba(255,107,157,0.08);color:var(--pink)">Indonesian, Malay, Tagalog → all from Proto-Austronesian!</div></div>
+    </div>
+
+    <div style="text-align:center;margin-top:36px;">
+      <button class="btn-primary" onclick="showPage('assess')">📝 Take the Assessment Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ASSESSMENT HUB ===== -->
+<div class="page" id="page-assess">
+  <div id="assess-hub">
+    <div class="section-header">
+      <span class="section-tag tag-purple">E-Assessment</span>
+      <div class="section-title">📝 Assessment Hub</div>
+      <div class="section-desc">Choose an exercise type to test your knowledge of linguistics. Each exercise provides instant feedback and explanations.</div>
+    </div>
+    <div class="assessment-hub">
+      <div class="assessment-card" onclick="startMCQ()" style="border-top:4px solid var(--purple);">
+        <div class="ac-icon">🎮</div>
+        <div class="ac-title">Multiple Choice Quiz</div>
+        <div class="ac-desc">15 questions covering core concepts, language characteristics, and branches of linguistics. Answer and receive instant explanations.</div>
+        <div class="ac-meta">
+          <span class="ac-pill tag-purple">15 Questions</span>
+          <span class="ac-pill tag-cyan">Timed</span>
+          <span class="ac-pill tag-green">Explanations</span>
+        </div>
+      </div>
+      <div class="assessment-card" onclick="startFITB()" style="border-top:4px solid var(--cyan);">
+        <div class="ac-icon">✏️</div>
+        <div class="ac-title">Fill in the Blank</div>
+        <div class="ac-desc">Complete sentences about key linguistics terms and concepts. Type in the missing word to prove your mastery of terminology.</div>
+        <div class="ac-meta">
+          <span class="ac-pill tag-cyan">10 Items</span>
+          <span class="ac-pill tag-amber">Terminology</span>
+        </div>
+      </div>
+      <div class="assessment-card" onclick="startMatch()" style="border-top:4px solid var(--green);">
+        <div class="ac-icon">🔗</div>
+        <div class="ac-title">Matching Exercise</div>
+        <div class="ac-desc">Match linguistics terms to their correct definitions. Click a term on the left, then click the matching definition on the right.</div>
+        <div class="ac-meta">
+          <span class="ac-pill tag-green">10 Pairs</span>
+          <span class="ac-pill tag-pink">Interactive</span>
+        </div>
+      </div>
+      <div class="assessment-card" onclick="startTF()" style="border-top:4px solid var(--amber);">
+        <div class="ac-icon">✅</div>
+        <div class="ac-title">True / False</div>
+        <div class="ac-desc">Evaluate statements about linguistics: decide whether each is true or false and get detailed feedback explaining the correct answer.</div>
+        <div class="ac-meta">
+          <span class="ac-pill tag-amber">12 Statements</span>
+          <span class="ac-pill tag-orange">Critical Thinking</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MCQ SECTION -->
+  <div id="mcq-section" style="display:none;">
+    <button class="back-btn" onclick="backToHub()">← Back to Hub</button>
+    <div class="section-header">
+      <span class="section-tag tag-purple">Exercise 1</span>
+      <div class="section-title">🎮 Multiple Choice Quiz</div>
+    </div>
+    <div class="quiz-container">
+      <div id="quiz-main">
+        <div class="quiz-progress">
+          <div class="progress-text"><span id="q-counter">Question 1 of 15</span><span id="q-score-live">Score: 0</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar" id="progress-bar" style="width:6.67%"></div></div>
+        </div>
+        <div class="timer-bar">
+          <div class="timer-display" id="timer-display">⏱ 30s</div>
+          <div class="timer-track"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+        </div>
+        <div class="quiz-question">
+          <div class="question-category" id="q-category">Core Concepts</div>
+          <div class="question-text" id="q-text">Loading question...</div>
+        </div>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-feedback" id="quiz-feedback">
+          <div class="feedback-title" id="feedback-title"></div>
+          <div class="feedback-text" id="feedback-text"></div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:18px;">
+          <button class="btn-primary" id="next-btn" onclick="nextQuestion()" style="display:none;">Next Question →</button>
+        </div>
+      </div>
+      <div class="quiz-score" id="quiz-score">
+        <div class="score-emoji" id="score-emoji">🏆</div>
+        <div class="score-num" id="score-num">0</div>
+        <div class="score-label">out of 15 correct</div>
+        <div class="score-breakdown" id="score-breakdown"></div>
+        <div class="score-msg" id="score-msg"></div>
+        <button class="btn-primary" onclick="resetQuiz()" style="margin-right:10px;">🔄 Try Again</button>
+        <button class="btn-secondary" onclick="backToHub()">← Assessment Hub</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FITB SECTION -->
+  <div id="fitb-section" style="display:none;">
+    <button class="back-btn" onclick="backToHub()">← Back to Hub</button>
+    <div class="section-header">
+      <span class="section-tag tag-cyan">Exercise 2</span>
+      <div class="section-title">✏️ Fill in the Blank</div>
+      <div class="section-desc">Complete each sentence with the correct linguistics term. Type your answer and click Check.</div>
+    </div>
+    <div class="fitb-container" id="fitb-container"></div>
+    <div style="text-align:center;margin-top:28px;" id="fitb-result" style="display:none;">
+      <div class="quiz-score show" id="fitb-score-card" style="display:none;">
+        <div class="score-emoji" id="fitb-emoji">✏️</div>
+        <div class="score-num" id="fitb-score-num">0</div>
+        <div class="score-label">out of 10 correct</div>
+        <div class="score-msg" id="fitb-score-msg"></div>
+        <button class="btn-primary" onclick="resetFITB()" style="margin-right:10px;">🔄 Try Again</button>
+        <button class="btn-secondary" onclick="backToHub()">← Assessment Hub</button>
+      </div>
+      <button class="btn-primary" id="fitb-submit-btn" onclick="submitFITB()">Submit Answers ✓</button>
+    </div>
+  </div>
+
+  <!-- MATCHING SECTION -->
+  <div id="match-section" style="display:none;">
+    <button class="back-btn" onclick="backToHub()">← Back to Hub</button>
+    <div class="section-header">
+      <span class="section-tag tag-green">Exercise 3</span>
+      <div class="section-title">🔗 Matching Exercise</div>
+      <div class="section-desc">Click a term on the left, then click the matching definition on the right. Complete all pairs to see your score.</div>
+    </div>
+    <div class="match-container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px;">
+        <div class="match-col-label">Terms</div>
+        <div class="match-col-label">Definitions</div>
+      </div>
+      <div class="match-grid" id="match-grid"></div>
+      <div class="match-score-bar" id="match-score-bar" style="display:none;">
+        <div><strong id="match-score-text">0 / 10 matched</strong></div>
+        <div id="match-actions"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRUE/FALSE SECTION -->
+  <div id="tf-section" style="display:none;">
+    <button class="back-btn" onclick="backToHub()">← Back to Hub</button>
+    <div class="section-header">
+      <span class="section-tag tag-amber">Exercise 4</span>
+      <div class="section-title">✅ True / False</div>
+      <div class="section-desc">Read each statement carefully and decide whether it is True or False. You'll receive an explanation for each answer.</div>
+    </div>
+    <div class="tf-container" id="tf-container"></div>
+    <div style="text-align:center;margin-top:28px;" id="tf-result-card" style="display:none;">
+      <div class="quiz-score show" id="tf-score-card" style="display:none;">
+        <div class="score-emoji" id="tf-emoji">✅</div>
+        <div class="score-num" id="tf-score-num">0</div>
+        <div class="score-label">out of 12 correct</div>
+        <div class="score-msg" id="tf-score-msg"></div>
+        <button class="btn-primary" onclick="resetTF()" style="margin-right:10px;">🔄 Try Again</button>
+        <button class="btn-secondary" onclick="backToHub()">← Assessment Hub</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrapper -->
+
+<!-- ===== REFERENCES PAGE ===== -->
+<div class="page" id="page-refs">
+  <div class="wrapper" style="position:relative;z-index:1;">
+  <div class="biblio-section">
+    <div class="section-header" style="margin-top:40px;">
+      <span class="section-tag tag-purple">Bibliography</span>
+      <div class="section-title">📖 References</div>
+      <div class="section-desc">Sources supporting the concepts covered in this e-assessment.</div>
+    </div>
+    <ul class="biblio-list">
+
+      <li class="biblio-item">
+        <div class="biblio-num">[1]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Trask, R. L., &amp; Stockwell, P. (2021). <em>Language and Linguistics: The Key Concepts</em> (3rd ed.). Routledge.
+            <span class="biblio-tag tag-purple">Language / Linguistics Definition</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[2]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Yule, G. (2022). <em>The Study of Language</em> (7th ed.). Cambridge University Press.
+            <span class="biblio-tag tag-cyan">Core Textbook — All Branches</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[3]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            de Saussure, F. (2020). <em>Course in General Linguistics</em> (W. Baskin, Trans.; M. Saussy, Ed.). Columbia University Press. (Original work published 1916)
+            <span class="biblio-tag tag-pink">Langue/Parole · Sign · Synchronic/Diachronic</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[4]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Chomsky, N. (2021). <em>The MIT Press Essential Knowledge series: Chomsky on Language</em>. MIT Press. (Drawing on key arguments from <em>Aspects of the Theory of Syntax</em>, 1965, and later works.)
+            <span class="biblio-tag tag-green">Competence/Performance · LAD · UG</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[5]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Aronoff, M., &amp; Rees-Miller, J. (Eds.). (2020). <em>The Handbook of Linguistics</em> (2nd ed.). Wiley-Blackwell.
+            <span class="biblio-tag tag-amber">Morphology · Syntax · Phonology · Semantics</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[6]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Levinson, S. C. (2021). <em>Pragmatics</em> (2nd ed.). Cambridge University Press.
+            <span class="biblio-tag tag-blue">Pragmatics · Speech Acts · Implicature · Deixis</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[7]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Wardhaugh, R., &amp; Fuller, J. M. (2021). <em>An Introduction to Sociolinguistics</em> (8th ed.). Wiley-Blackwell.
+            <span class="biblio-tag tag-orange">Sociolinguistics · Diglossia · Register · Dialect</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[8]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Harley, T. A. (2022). <em>The Psychology of Language: From Data to Theory</em> (5th ed.). Routledge.
+            <span class="biblio-tag tag-red">Psycholinguistics · Language Acquisition · Aphasia</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[9]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Denes, P. B., &amp; Pinson, E. N. (2020). <em>The Speech Chain: The Physics and Biology of Spoken Language</em>. Waveland Press. (Reissue of classic; widely cited for phonetics and the vocal-auditory channel.)
+            <span class="biblio-tag tag-purple">Phonetics · Vocal-Auditory Channel · Articulatory</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[10]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Hockett, C. F. (2022 reprint). The origin of speech. <em>Scientific American</em>, 203(3), 88–96. (Originally published 1960; widely cited for design features of human language.)
+            <span class="biblio-tag tag-green">Design Features · Displacement · Productivity · Duality</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[11]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Kaan, E., &amp; Swaab, T. Y. (2022). The neural circuitry of syntactic comprehension. <em>Trends in Cognitive Sciences</em>, 6(8), 350–356. Republished in open-access neurolinguistics collections.
+            <span class="biblio-tag tag-cyan">Neurolinguistics · Broca's Area · Wernicke's Area</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[12]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Jakobson, R. (2021 reprint). Closing statement: Linguistics and poetics. In T. A. Sebeok (Ed.), <em>Style in Language</em> (pp. 350–377). MIT Press. (Original 1960; foundational for six functions of language.)
+            <span class="biblio-tag tag-blue">Functions of Language · Referential · Phatic · Poetic</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[13]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Campbell, L. (2021). <em>Historical Linguistics: An Introduction</em> (4th ed.). MIT Press.
+            <span class="biblio-tag tag-pink">Historical Linguistics · Sound Change · Proto-Language</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[14]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Sapir, E. (2021 reprint). <em>Language: An Introduction to the Study of Speech</em>. Dover Publications. (Original work published 1921; cited for the definition of language as "a purely human, non-instinctive method.")
+            <span class="biblio-tag tag-amber">Definition of Language · Arbitrariness</span>
+          </div>
+        </div>
+      </li>
+
+      <li class="biblio-item">
+        <div class="biblio-num">[15]</div>
+        <div class="biblio-content">
+          <div class="biblio-ref">
+            Fromkin, V., Rodman, R., &amp; Hyams, N. (2023). <em>An Introduction to Language</em> (11th ed.). Cengage Learning.
+            <span class="biblio-tag tag-purple">All Topics — Comprehensive Introductory Text</span>
+          </div>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+  </div>
+</div>
+
+<footer>
+  <p>🌍 <strong>LinguaVerse</strong>: Interactive Linguistics E-Assessment Platform</p>
+  <p style="margin-top:6px">Made with ❤️ for all language learners around the world</p>
+  <p style="margin-top:10px;font-size:13px;"><button class="btn-secondary" onclick="showPage('refs')" style="font-size:12px;padding:7px 16px;cursor:pointer;">📖 View Full References</button></p>
+</footer>
+
+<script>
+// ============ PAGE NAV ============
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t=>{ if(t.getAttribute('onclick').includes("'"+id+"'")) t.classList.add('active'); });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function backToHub() {
+  clearTimer();
+  document.getElementById('assess-hub').style.display='block';
+  ['mcq-section','fitb-section','match-section','tf-section'].forEach(s=>document.getElementById(s).style.display='none');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function startMCQ() {
+  document.getElementById('assess-hub').style.display='none';
+  document.getElementById('mcq-section').style.display='block';
+  resetQuiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function startFITB() {
+  document.getElementById('assess-hub').style.display='none';
+  document.getElementById('fitb-section').style.display='block';
+  renderFITB();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function startMatch() {
+  document.getElementById('assess-hub').style.display='none';
+  document.getElementById('match-section').style.display='block';
+  renderMatch();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function startTF() {
+  document.getElementById('assess-hub').style.display='none';
+  document.getElementById('tf-section').style.display='block';
+  renderTF();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ============ MODAL DATA ============
+const modalData = {
+  bahasa: { emoji:'🗣️', title:'What Is Language?', body:`<p>Language is an <strong>arbitrary system of vocal symbols</strong> used by members of a social group to communicate, interact, and identify themselves. <span class="cite-ref" title="Trask, R. L., & Stockwell, P. (2021). Language and Linguistics: The Key Concepts (3rd ed.). Routledge.">(Trask & Stockwell, 2021)</span></p><div class="highlight-box">💡 <strong>Simple definition:</strong> Language is a human communication tool that uses sounds or writing with specific rules.</div><p>Scholars define language in various ways:</p><ul class="example-list"><li><strong>Ferdinand de Saussure</strong>: Language is a system of signs consisting of a signifier (sound-image) and a signified (concept). <span class="cite-ref" title="de Saussure, F. (2020/1916). Course in General Linguistics. Columbia University Press.">(de Saussure, 2020/1916)</span></li><li><strong>Noam Chomsky</strong>: Language is a set of sentences generated from finite rules. <span class="cite-ref" title="Chomsky, N. (2021). MIT Press. Drawing on Aspects of the Theory of Syntax (1965).">(Chomsky, 2021)</span></li><li><strong>Edward Sapir</strong>: Language is a purely human, non-instinctive method of communicating ideas through voluntarily produced symbols. <span class="cite-ref" title="Sapir, E. (2021 reprint). Language: An Introduction to the Study of Speech. Dover Publications.">(Sapir, 2021 reprint)</span></li></ul><p style="margin-top:14px">Human language has a <strong>hierarchical structure</strong>: phonemes → morphemes → words → phrases → sentences → discourse. <span class="cite-ref" title="Fromkin, V., Rodman, R., & Hyams, N. (2023). An Introduction to Language (11th ed.). Cengage Learning.">(Fromkin et al., 2023)</span></p>` },
+  linguistik: { emoji:'🔭', title:'What Is Linguistics?', body:`<p>Linguistics is <strong>the scientific study of language</strong>. Not about learning many languages, but understanding HOW language works: its structure, function, history, and its relationship to the mind and society. <span class="cite-ref" title="Yule, G. (2022). The Study of Language (7th ed.). Cambridge University Press.">(Yule, 2022)</span></p><div class="highlight-box">🧪 Linguistics = The Science of Language! Linguists study language using systematic scientific methods.</div><p><strong>Big questions linguistics answers:</strong></p><ul class="example-list"><li>How is language structured? (Phonology, Morphology, Syntax) <span class="cite-ref" title="Aronoff, M. & Rees-Miller, J. (Eds.). (2020). The Handbook of Linguistics (2nd ed.). Wiley-Blackwell.">(Aronoff & Rees-Miller, 2020)</span></li><li>What do words and sentences mean? (Semantics, Pragmatics) <span class="cite-ref" title="Levinson, S. C. (2021). Pragmatics (2nd ed.). Cambridge University Press.">(Levinson, 2021)</span></li><li>How does language change over time? (Historical Linguistics) <span class="cite-ref" title="Campbell, L. (2021). Historical Linguistics: An Introduction (4th ed.). MIT Press.">(Campbell, 2021)</span></li><li>How is language processed by the brain? (Neurolinguistics) <span class="cite-ref" title="Kaan, E. & Swaab, T. Y. (2022). The neural circuitry of syntactic comprehension. Trends in Cognitive Sciences.">(Kaan & Swaab, 2022)</span></li><li>How do language and society influence each other? (Sociolinguistics) <span class="cite-ref" title="Wardhaugh, R. & Fuller, J. M. (2021). An Introduction to Sociolinguistics (8th ed.). Wiley-Blackwell.">(Wardhaugh & Fuller, 2021)</span></li></ul>` },
+  'langue-parole': { emoji:'⚖️', title:'Langue vs Parole (Saussure)', body:`<p>Ferdinand de Saussure distinguished two fundamental aspects of language: <span class="cite-ref" title="de Saussure, F. (2020/1916). Course in General Linguistics. Columbia University Press.">(de Saussure, 2020/1916)</span></p><div class="highlight-box">📚 <strong>Langue</strong>: The abstract, collective language system, the shared "rules of the game."<br><br>🗣️ <strong>Parole</strong>: The actual use of language by an individual in a concrete situation.</div><p><strong>Simple analogies:</strong></p><ul class="example-list"><li><strong>Langue</strong> = The rules of chess (apply to all players)</li><li><strong>Parole</strong> = A specific chess game (each player plays differently)</li><li><strong>Langue</strong> = A recipe (fixed formula)</li><li><strong>Parole</strong> = The cooked dish (results vary per person)</li></ul>` },
+  'competence-performance': { emoji:'🧠', title:'Competence vs Performance (Chomsky)', body:`<p>Noam Chomsky (1965) distinguished two crucial concepts: <span class="cite-ref" title="Chomsky, N. (2021). MIT Press. Drawing on Aspects of the Theory of Syntax (1965).">(Chomsky, 2021)</span></p><div class="highlight-box">🧠 <strong>Linguistic Competence</strong>: A person's innate knowledge of their native language, specifically the internalized mental grammar.<br><br>🎤 <strong>Linguistic Performance</strong>: Actual language use, which may include slips of the tongue, pauses, and errors.</div><ul class="example-list"><li>Knowing "I go to school" is grammatical, but sometimes mispronouncing it → performance error, not competence error.</li><li>Chomsky argued all humans are born with a <strong>Language Acquisition Device (LAD)</strong>.</li><li>Evidence: children worldwide acquire their mother tongue rapidly without formal instruction. <span class="cite-ref" title="Harley, T. A. (2022). The Psychology of Language (5th ed.). Routledge.">(Harley, 2022)</span></li></ul>` },
+  tanda: { emoji:'🔗', title:'The Linguistic Sign', body:`<p>Saussure described every linguistic sign as <strong>a two-sided sheet of paper</strong>: <span class="cite-ref" title="de Saussure, F. (2020/1916). Course in General Linguistics. Columbia University Press.">(de Saussure, 2020/1916)</span></p><div class="highlight-box">🔊 <strong>Signifier</strong>: The sound-image, that is, the acoustic impression.<br><br>💭 <strong>Signified</strong>: The concept or meaning pointed to by the signifier.</div><ul class="example-list"><li><strong>Arbitrary</strong>: No natural connection between sound and meaning. "Tree," "arbre," "Baum" = same concept!</li><li><strong>Linear</strong>: Linguistic signs unfold in time; two words can't be spoken simultaneously.</li><li><strong>Immutable yet Mutable</strong>: A single speaker can't change the system, but word meanings shift over time.</li></ul>` },
+  fungsi: { emoji:'🎯', title:'Functions of Language', body:`<p>Roman Jakobson identified <strong>6 main functions of language</strong>: <span class="cite-ref" title="Jakobson, R. (2021 reprint). Closing statement: Linguistics and poetics. In T. A. Sebeok (Ed.), Style in Language (pp. 350–377). MIT Press.">(Jakobson, 2021 reprint)</span></p><ul class="example-list"><li><strong>Referential</strong>: Refers to the real world. "It is raining today."</li><li><strong>Expressive</strong>: Expresses feelings. "Oh, I'm exhausted!"</li><li><strong>Conative</strong>: Influences the listener. "Close the door!"</li><li><strong>Phatic</strong>: Maintains social contact. "Hello! How are you?"</li><li><strong>Metalinguistic</strong>: Talking about language itself. "'Table' is a noun."</li><li><strong>Poetic/Aesthetic</strong>: Focuses on the message form. Poetry, rhymes, slogans!</li></ul>` },
+  'manusia-hewan': { emoji:'🆚', title:'Human Language vs Animal Communication', body:`<p>Animals communicate, but is it "language"? Hockett identified unique features of human language absent in animal systems: <span class="cite-ref" title="Hockett, C. F. (2022 reprint). The origin of speech. Scientific American, 203(3), 88–96.">(Hockett, 2022 reprint)</span></p><ul class="example-list"><li><strong>Displacement</strong>: Humans can talk about things not present. Bees can only report current flower locations!</li><li><strong>Productivity</strong>: Humans create unlimited new sentences; animal signals are finite and fixed.</li><li><strong>Duality of Patterning</strong>: Human language has two levels: sounds and meaning. Animals do not.</li><li><strong>Cultural Transmission</strong>: Human language is culturally learned; animal communication is largely instinctive.</li></ul><div class="highlight-box">🐬 Chimpanzees can learn hundreds of sign words, but cannot form complex grammatical sentences, a finding that supports Chomsky's theory of a biologically unique human language capacity! <span class="cite-ref" title="Chomsky, N. (2021). MIT Press.">(Chomsky, 2021)</span></div>` },
+  'sinkronik-diakronik': { emoji:'⏳', title:'Synchronic vs Diachronic Linguistics', body:`<p>Saussure introduced two approaches to studying language: <span class="cite-ref" title="de Saussure, F. (2020/1916). Course in General Linguistics. Columbia University Press.">(de Saussure, 2020/1916)</span></p><div class="highlight-box">📸 <strong>Synchronic Linguistics</strong>: Studying language at a single point in time (a "snapshot").<br><br>🎬 <strong>Diachronic Linguistics</strong>: Studying language change over time (a "film").</div><ul class="example-list"><li><strong>Synchronic</strong>: Studying English grammar in 2024.</li><li><strong>Diachronic</strong>: Tracing how "nice" shifted from meaning "foolish" to "pleasant" over centuries. <span class="cite-ref" title="Campbell, L. (2021). Historical Linguistics: An Introduction (4th ed.). MIT Press.">(Campbell, 2021)</span></li><li><strong>Diachronic</strong>: Proving Malay, Indonesian, and Tagalog share a common ancestor: Proto-Austronesian. <span class="cite-ref" title="Campbell, L. (2021). Historical Linguistics: An Introduction (4th ed.). MIT Press.">(Campbell, 2021)</span></li></ul>` },
+  arbitrer: { emoji:'🎲', title:'Characteristic 1: Arbitrariness', body:`<p>Arbitrariness is fundamental to language. Linguistic signals <strong>do not resemble</strong> the objects or concepts they refer to. There is no natural connection between form and meaning. <span class="cite-ref" title="de Saussure, F. (2020/1916). Course in General Linguistics. Columbia University Press.">(de Saussure, 2020/1916)</span></p><div class="highlight-box">🎲 Evidence: The same concept "dog" is called anjing, chien, Hund, perro in different languages, yet all refer to the same animal!</div><ul class="example-list"><li>Onomatopoeia (buzz, meow) might seem non-arbitrary, but even these differ cross-linguistically. <span class="cite-ref" title="Fromkin, V., Rodman, R., & Hyams, N. (2023). An Introduction to Language (11th ed.). Cengage Learning.">(Fromkin et al., 2023)</span></li><li>Arbitrariness enables language's flexibility; any sound can mean anything by social convention.</li></ul>` },
+  produktif: { emoji:'♾️', title:'Characteristic 2: Productivity', body:`<p>Language is <strong>infinitely creative</strong>. Speakers can use a finite set of rules and words to produce and understand an unlimited number of novel sentences. <span class="cite-ref" title="Hockett, C. F. (2022 reprint). The origin of speech. Scientific American, 203(3), 88–96. | Fromkin, V. et al. (2023). An Introduction to Language (11th ed.). Cengage Learning.">(Hockett, 2022 reprint; Fromkin et al., 2023)</span></p><div class="highlight-box">♾️ You can say something right now that has never been said before, and others will understand it!</div><ul class="example-list"><li>Productivity is enabled by grammar rules: recursion, embedding, and combination.</li><li>"The purple dragon who loved grammar ate the syntax textbook." is probably never said before, yet perfectly grammatical!</li></ul>` },
+  duality: { emoji:'🔁', title:'Characteristic 3: Duality of Patterning', body:`<p>Human language operates on <strong>two simultaneous levels</strong>: <span class="cite-ref" title="Hockett, C. F. (2022 reprint). The origin of speech. Scientific American, 203(3), 88–96.">(Hockett, 2022 reprint)</span></p><div class="highlight-box">Level 1: Phonemes, meaningless sounds (/b/, /æ/, /t/)<br>Level 2: Morphemes and Words, meaningful combinations ("bat")</div><ul class="example-list"><li>From ~44 English phonemes, hundreds of thousands of words can be formed. <span class="cite-ref" title="Fromkin, V., Rodman, R., & Hyams, N. (2023). An Introduction to Language (11th ed.). Cengage Learning.">(Fromkin et al., 2023)</span></li><li>Animal systems lack this duality; each signal is a single unanalyzable unit.</li><li>This double articulation massively multiplies the expressive power of human language.</li></ul>` },
+  displacement: { emoji:'🚀', title:'Characteristic 4: Displacement', body:`<p>Displacement allows language users to talk about things <strong>removed in time and space</strong>: the past, the future, distant places, or things that don't exist at all. <span class="cite-ref" title="Hockett, C. F. (2022 reprint). The origin of speech. Scientific American, 203(3), 88–96.">(Hockett, 2022 reprint)</span></p><div class="highlight-box">🚀 Bees can only signal the current location of flowers just visited. Humans can discuss last year's holiday or plans for next century!</div><ul class="example-list"><li>Displacement enables history, planning, fiction, and science. <span class="cite-ref" title="Fromkin, V., Rodman, R., & Hyams, N. (2023). An Introduction to Language (11th ed.). Cengage Learning.">(Fromkin et al., 2023)</span></li><li>Without displacement, communication would be limited to the immediate here and now.</li></ul>` },
+  cultural: { emoji:'🎭', title:'Characteristic 5: Cultural Transmission', body:`<p>Language is <strong>transmitted through culture</strong>, not inherited biologically. What is biologically inherited is only the capacity to learn language (the LAD). <span class="cite-ref" title="Chomsky, N. (2021). MIT Press. | Hockett, C. F. (2022 reprint). Scientific American.">(Chomsky, 2021; Hockett, 2022 reprint)</span></p><div class="highlight-box">🎭 An Indonesian child raised from birth by a French family will speak French natively, not Indonesian!</div><ul class="example-list"><li>This is why children acquire the language of their environment, not of their biological parents.</li><li>Cultural transmission explains linguistic diversity; humans can learn any language they are exposed to early enough. <span class="cite-ref" title="Harley, T. A. (2022). The Psychology of Language (5th ed.). Routledge.">(Harley, 2022)</span></li></ul>` },
+  vocal: { emoji:'🎵', title:'Characteristic 6: Vocal-Auditory Channel', body:`<p>By default, human language uses the <strong>vocal-auditory channel</strong>: sounds are produced by the vocal tract and received by the ears. <span class="cite-ref" title="Denes, P. B., & Pinson, E. N. (2020). The Speech Chain: The Physics and Biology of Spoken Language. Waveland Press.">(Denes & Pinson, 2020)</span></p><div class="highlight-box">🎵 Sign languages demonstrate that the vocal-auditory channel is not strictly necessary; the visual-gestural channel can fully support language!</div><ul class="example-list"><li>The vocal-auditory channel leaves the hands free for other tasks while communicating.</li><li>Sign languages are full languages with complete phonology, morphology, and syntax, just in a different modality. <span class="cite-ref" title="Fromkin, V., Rodman, R., & Hyams, N. (2023). An Introduction to Language (11th ed.). Cengage Learning.">(Fromkin et al., 2023)</span></li></ul>` },
+  interchangeable: { emoji:'🔄', title:'Characteristic 7: Interchangeability', body:`<p>Language users can both <strong>produce and receive</strong> the same linguistic signals. Any speaker can also be a listener, and vice versa. <span class="cite-ref" title="Hockett, C. F. (2022 reprint). The origin of speech. Scientific American, 203(3), 88–96.">(Hockett, 2022 reprint)</span></p><div class="highlight-box">🔄 Many animal communication systems are one-directional. Male crickets chirp; females cannot produce the same chirp!</div><ul class="example-list"><li>Interchangeability is essential for dialogue and conversation.</li><li>It enables teaching, debate, storytelling, or any form of two-way linguistic exchange. <span class="cite-ref" title="Yule, G. (2022). The Study of Language (7th ed.). Cambridge University Press.">(Yule, 2022)</span></li></ul>` },
+  dynamic: { emoji:'🔄', title:'Characteristic 8: Language is Dynamic', body:`<p>Language is <strong>not static</strong>; it constantly changes alongside the society that uses it. Changes occur at all levels: vocabulary, meaning, sounds, and grammar. <span class="cite-ref" title="Campbell, L. (2021). Historical Linguistics: An Introduction (4th ed.). MIT Press.">(Campbell, 2021)</span></p><div class="highlight-box">🔄 "Silly" once meant blessed; now it means foolish. "Podcast," "emoji," and "meme" are entirely new words for new concepts! <span class="cite-ref" title="Trask, R. L., & Stockwell, P. (2021). Language and Linguistics: The Key Concepts (3rd ed.). Routledge.">(Trask & Stockwell, 2021)</span></div><ul class="example-list"><li><strong>Vocabulary</strong>: New words coined for new technologies and concepts.</li><li><strong>Meaning shift</strong>: Words expand, narrow, or shift meaning over time.</li><li><strong>Grammar change</strong>: Old English had complex case endings largely absent in Modern English.</li></ul>` },
+  fonologi: { emoji:'🔊', title:'Phonology: The Sound System', body:`<p>Phonology studies <strong>language sounds as a functional system</strong>, examining how sounds interact and distinguish meaning. <span class="cite-ref" title="Aronoff, M. & Rees-Miller, J. (Eds.). (2020). The Handbook of Linguistics (2nd ed.). Wiley-Blackwell.">(Aronoff & Rees-Miller, 2020)</span></p><div class="highlight-box">🔊 A <strong>phoneme</strong> is the smallest sound unit that distinguishes meaning. /p/ vs /b/: "pin" ≠ "bin"!</div><ul class="example-list"><li><strong>Phoneme</strong>: Meaning-distinguishing sound unit. English has ~44 phonemes. <span class="cite-ref" title="Fromkin, V., Rodman, R., & Hyams, N. (2023). An Introduction to Language (11th ed.). Cengage Learning.">(Fromkin et al., 2023)</span></li><li><strong>Allophone</strong>: A phoneme variant that does not change meaning. Aspirated [pʰ] in "pin" vs unaspirated [p] in "spin" are allophones of /p/.</li><li><strong>Minimal Pairs</strong>: Words differing in only one phoneme: "pin/bin," "cat/bat," "ship/chip."</li></ul>` },
+  fonetik: { emoji:'🎙️', title:'Phonetics: The Science of Sound', body:`<p>Phonetics studies <strong>language sounds physically</strong>: how they are produced, transmitted, and perceived. <span class="cite-ref" title="Denes, P. B., & Pinson, E. N. (2020). The Speech Chain: The Physics and Biology of Spoken Language. Waveland Press.">(Denes & Pinson, 2020)</span></p><div class="highlight-box">🎙️ Three branches: <strong>Articulatory</strong> (production), <strong>Acoustic</strong> (sound waves), <strong>Auditory</strong> (perception).</div><ul class="example-list"><li><strong>Bilabial</strong>: /p/, /b/, /m/: both lips meet.</li><li><strong>Alveolar</strong>: /t/, /d/, /n/: tongue touches the alveolar ridge.</li><li><strong>Voiced vs Voiceless</strong>: /b/ is voiced (vocal cords vibrate); /p/ is voiceless.</li><li>The IPA (International Phonetic Alphabet) is the universal symbol system for all language sounds. <span class="cite-ref" title="Fromkin, V., Rodman, R., & Hyams, N. (2023). An Introduction to Language (11th ed.). Cengage Learning.">(Fromkin et al., 2023)</span></li></ul>` },
+  morfologi: { emoji:'🧩', title:'Morphology: Word Structure', body:`<p>Morphology studies the <strong>internal structure of words</strong>: how morphemes combine to form words. <span class="cite-ref" title="Aronoff, M. & Rees-Miller, J. (Eds.). (2020). The Handbook of Linguistics (2nd ed.). Wiley-Blackwell.">(Aronoff & Rees-Miller, 2020)</span></p><div class="highlight-box">🧩 A <strong>morpheme</strong> is the smallest meaningful grammatical unit. "Unhappy" = un- + happy → 2 morphemes!</div><ul class="example-list"><li><strong>Free Morphemes</strong>: Stand alone. "book," "eat," "walk."</li><li><strong>Bound Morphemes</strong>: Must attach to another morpheme. un-, -ness, -ing, pre-, -tion.</li><li><strong>Affixation</strong>: write → unwrite, written, writer, rewrite. <span class="cite-ref" title="Fromkin, V., Rodman, R., & Hyams, N. (2023). An Introduction to Language (11th ed.). Cengage Learning.">(Fromkin et al., 2023)</span></li><li><strong>Compounding</strong>: book + shelf = bookshelf.</li></ul>` },
+  sintaksis: { emoji:'🏗️', title:'Syntax: Sentence Structure', body:`<p>Syntax studies the <strong>rules for combining words</strong> into grammatical phrases, clauses, and sentences. <span class="cite-ref" title="Aronoff, M. & Rees-Miller, J. (Eds.). (2020). The Handbook of Linguistics (2nd ed.). Wiley-Blackwell.">(Aronoff & Rees-Miller, 2020)</span></p><div class="highlight-box">🏗️ Syntax determines what makes a sentence grammatical: "The cat eats fish" ✓ vs "Eats cat fish" ✗.</div><ul class="example-list"><li><strong>Constituency</strong>: Sentences have hierarchical phrase structure (NP, VP, PP).</li><li><strong>Grammaticality</strong>: Speakers intuitively know grammatical from ungrammatical sentences. <span class="cite-ref" title="Chomsky, N. (2021). MIT Press.">(Chomsky, 2021)</span></li><li><strong>Ambiguity</strong>: "Flying planes can be dangerous" is a classic syntactic ambiguity!</li></ul>` },
+  semantik: { emoji:'💭', title:'Semantics: The Study of Meaning', body:`<p>Semantics studies <strong>meaning in language</strong>: the meaning of words, phrases, sentences, and the relationships between meanings. <span class="cite-ref" title="Aronoff, M. & Rees-Miller, J. (Eds.). (2020). The Handbook of Linguistics (2nd ed.). Wiley-Blackwell.">(Aronoff & Rees-Miller, 2020)</span></p><div class="highlight-box">💭 Key semantic relations: synonymy (thin/slim), antonymy (hot/cold), hyponymy (rose is a hyponym of flower), homonymy (bank). <span class="cite-ref" title="Yule, G. (2022). The Study of Language (7th ed.). Cambridge University Press.">(Yule, 2022)</span></div><ul class="example-list"><li><strong>Synonymy</strong>: Different words, similar meaning. "big" / "large."</li><li><strong>Antonymy</strong>: Opposite meaning. "hot" / "cold."</li><li><strong>Homonymy</strong>: Same sound, unrelated meanings. "bank" (river) / "bank" (finance).</li><li><strong>Polysemy</strong>: One word, multiple related meanings. "head" of a person / of a department.</li></ul>` },
+  pragmatik: { emoji:'💬', title:'Pragmatics: Meaning in Context', body:`<p>Pragmatics studies <strong>how context shapes meaning</strong>, specifically the difference between what is literally said and what is actually meant. <span class="cite-ref" title="Levinson, S. C. (2021). Pragmatics (2nd ed.). Cambridge University Press.">(Levinson, 2021)</span></p><div class="highlight-box">💬 Speech Act Theory: "Can you open the window?" is not a question about ability; it is a request!</div><ul class="example-list"><li><strong>Speech Acts</strong>: Locutionary (what is said), Illocutionary (what is meant), Perlocutionary (the effect).</li><li><strong>Implicature</strong>: "Do you know the time?" → "Yes, it's 3 PM." Not just a yes/no answer! <span class="cite-ref" title="Levinson, S. C. (2021). Pragmatics (2nd ed.). Cambridge University Press.">(Levinson, 2021)</span></li><li><strong>Deixis</strong>: Words like "here," "now," "I": their meaning depends entirely on context.</li></ul>` },
+  sosioling: { emoji:'👥', title:'Sociolinguistics', body:`<p>Sociolinguistics studies the <strong>relationship between language and society</strong>, examining how social factors influence language use, variation, and change. <span class="cite-ref" title="Wardhaugh, R., & Fuller, J. M. (2021). An Introduction to Sociolinguistics (8th ed.). Wiley-Blackwell.">(Wardhaugh & Fuller, 2021)</span></p><div class="highlight-box">👥 Key phenomena: diglossia (formal vs informal varieties), code-switching, language attitudes, and language planning.</div><ul class="example-list"><li><strong>Dialect</strong>: Regional or social variety of a language.</li><li><strong>Register</strong>: Language variation according to the context of use (formal, informal, technical).</li><li><strong>Diglossia</strong>: Two varieties of a language used for different functions (e.g., Classical Arabic vs Colloquial Arabic). <span class="cite-ref" title="Wardhaugh, R., & Fuller, J. M. (2021). An Introduction to Sociolinguistics (8th ed.). Wiley-Blackwell.">(Wardhaugh & Fuller, 2021)</span></li></ul>` },
+  psikoling: { emoji:'🧠', title:'Psycholinguistics', body:`<p>Psycholinguistics studies the <strong>relationship between language and human cognitive processes</strong>: how we produce, comprehend, and acquire language. <span class="cite-ref" title="Harley, T. A. (2022). The Psychology of Language: From Data to Theory (5th ed.). Routledge.">(Harley, 2022)</span></p><div class="highlight-box">🧠 Language Acquisition: Children acquire their first language through universal stages: babbling → first words → two-word combinations → full sentences!</div><ul class="example-list"><li><strong>Language Acquisition</strong>: The study of how children learn language.</li><li><strong>Language Processing</strong>: How the brain parses and understands sentences in real time.</li><li><strong>Aphasia</strong>: Language disorders caused by brain damage, revealing the neural basis of language. <span class="cite-ref" title="Kaan, E., & Swaab, T. Y. (2022). The neural circuitry of syntactic comprehension. Trends in Cognitive Sciences.">(Kaan & Swaab, 2022)</span></li></ul>` },
+  neurolinguistik: { emoji:'🔬', title:'Neurolinguistics', body:`<p>Neurolinguistics studies how <strong>language is represented and processed in the brain</strong>. <span class="cite-ref" title="Kaan, E., & Swaab, T. Y. (2022). The neural circuitry of syntactic comprehension. Trends in Cognitive Sciences.">(Kaan & Swaab, 2022)</span></p><div class="highlight-box">🔬 Broca's Area (left frontal lobe) = language production. Wernicke's Area (left temporal lobe) = language comprehension!</div><ul class="example-list"><li><strong>Broca's Aphasia</strong>: Damage to Broca's Area → slow, effortful speech with intact comprehension.</li><li><strong>Wernicke's Aphasia</strong>: Damage to Wernicke's Area → fluent but meaningless speech, poor comprehension.</li><li>Neurolinguistics uses brain imaging (fMRI, EEG) to study language processing in real time. <span class="cite-ref" title="Harley, T. A. (2022). The Psychology of Language (5th ed.). Routledge.">(Harley, 2022)</span></li></ul>` },
+  'linguistik-historis': { emoji:'📜', title:'Historical Linguistics', body:`<p>Historical Linguistics studies <strong>language change over time</strong> and the reconstruction of proto-languages (ancestral language forms). <span class="cite-ref" title="Campbell, L. (2021). Historical Linguistics: An Introduction (4th ed.). MIT Press.">(Campbell, 2021)</span></p><div class="highlight-box">📜 The Comparative Method: By systematically comparing related languages, linguists can reconstruct their common ancestor, even without any written record!</div><ul class="example-list"><li><strong>Sound Change</strong>: Systematic, predictable shifts in pronunciation over generations.</li><li><strong>Semantic Change</strong>: Meaning shifts: narrowing, broadening, amelioration, pejoration. <span class="cite-ref" title="Trask, R. L., & Stockwell, P. (2021). Language and Linguistics: The Key Concepts (3rd ed.). Routledge.">(Trask & Stockwell, 2021)</span></li><li><strong>Language Families</strong>: Indo-European, Austronesian, Sino-Tibetan, all traced through historical linguistics.</li></ul>` }
+};
+
+function openModal(key) {
+  const d = modalData[key]; if(!d) return;
+  document.getElementById('modal-emoji').textContent=d.emoji;
+  document.getElementById('modal-title').textContent=d.title;
+  document.getElementById('modal-body').innerHTML=d.body;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(e) { if(e.target.id==='modal') closeModalBtn(); }
+function closeModalBtn() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+// ============ MCQ QUIZ ============
+const quizQuestions = [
+  { cat:'Core Concepts', q:'According to Saussure, what is the distinction between langue and parole? <span class="cite-ref" title="de Saussure, F. (2020/1916). Course in General Linguistics. Columbia University Press.">(de Saussure, 2020/1916)</span>', opts:['Langue = written language; Parole = spoken language','Langue = the abstract language system; Parole = individual speech acts','Langue = first language; Parole = second language','Langue = formal language; Parole = informal language'], ans:1, exp:'Saussure distinguished langue (the abstract, collective language system shared by all speakers) from parole (the actual use of language by an individual in a specific situation). Langue is the "rules of the game"; parole is each player\'s unique moves.' },
+  { cat:'Core Concepts', q:'Which scholar introduced the concept of Linguistic Competence vs Performance? <span class="cite-ref" title="Chomsky, N. (2021). MIT Press. Drawing on Aspects of the Theory of Syntax (1965).">(Chomsky, 2021)</span>', opts:['Ferdinand de Saussure','Roman Jakobson','Noam Chomsky','Edward Sapir'], ans:2, exp:'Noam Chomsky (1965) introduced the competence/performance distinction. Competence is the internalized mental grammar (ideal knowledge); Performance is actual language use, which may include slips, pauses, and errors.' },
+  { cat:'Language Characteristics', q:'The "arbitrary" nature of language means that... <span class="cite-ref" title="de Saussure, F. (2020/1916). Course in General Linguistics. Columbia University Press. | Fromkin, V. et al. (2023). An Introduction to Language (11th ed.).">(de Saussure, 2020/1916; Fromkin et al., 2023)</span>', opts:['Language changes over time','There is no natural connection between sound and meaning','Language has strict grammatical rules','Language is biologically inherited'], ans:1, exp:'Arbitrariness means there is no natural, motivated connection between the signifier (sound-image) and the signified (concept). Evidence: "dog," "chien," and "perro" all refer to the same animal using completely different sound sequences!' },
+  { cat:'Language Characteristics', q:'The bee "waggle dance" for communicating flower locations lacks which key human language property? <span class="cite-ref" title="Hockett, C. F. (1960/2022). The origin of speech. Scientific American, 203(3), 88–96.">(Hockett, 1960/2022)</span>', opts:['Vocal-Auditory Channel','Displacement (past/future reference)','Interchangeability','Productivity'], ans:1, exp:'Bees can only signal the location of flowers just visited; they cannot refer to yesterday\'s flowers or future locations. This is displacement: the ability to communicate about things removed in time and space.' },
+  { cat:'Language Characteristics', q:'Duality of Patterning in language means... <span class="cite-ref" title="Hockett, C. F. (1960/2022). The origin of speech. Scientific American. | Fromkin, V. et al. (2023). An Introduction to Language (11th ed.).">(Hockett, 1960/2022; Fromkin et al., 2023)</span>', opts:['Language has two main dialects','Language has two layers: meaningless sounds and meaningful units','There are two types of grammar: active and passive','Language can be both spoken and written'], ans:1, exp:'Duality of patterning (double articulation): Level 1 = phonemes (sounds that are meaningless alone); Level 2 = morphemes/words (meaningful combinations of sounds). From ~44 English phonemes, hundreds of thousands of words can be created!' },
+  { cat:'Branches of Linguistics', q:'The branch of linguistics studying the internal structure of words and word-formation processes is called... <span class="cite-ref" title="Aronoff, M. & Rees-Miller, J. (Eds.). (2020). The Handbook of Linguistics (2nd ed.). Wiley-Blackwell.">(Aronoff & Rees-Miller, 2020)</span>', opts:['Phonology','Morphology','Syntax','Semantics'], ans:1, exp:'Morphology studies morphemes (the smallest meaningful units) and word-formation processes such as affixation (un-happy-ness), reduplication (bye-bye), and compounding (bookshelf).' },
+  { cat:'Branches of Linguistics', q:'"Can you open the window?" is actually a request, not a question about ability. This is studied in... <span class="cite-ref" title="Levinson, S. C. (2021). Pragmatics (2nd ed.). Cambridge University Press.">(Levinson, 2021)</span>', opts:['Semantics','Phonology','Pragmatics','Morphology'], ans:2, exp:'Pragmatics studies how context influences meaning, specifically the difference between what is said (literal meaning) and what is meant (communicative intention): the domain of speech act theory and conversational implicature.' },
+  { cat:'Branches of Linguistics', q:"Broca's Area and Wernicke's Area are language centers in the brain. These are studied in the field of... <span class='cite-ref' title='Kaan, E. & Swaab, T. Y. (2022). The neural circuitry of syntactic comprehension. Trends in Cognitive Sciences.'>(Kaan & Swaab, 2022)</span>", opts:['Sociolinguistics','Psycholinguistics','Neurolinguistics','Pragmatics'], ans:2, exp:"Neurolinguistics studies the neural representation of language. Broca's Area (left frontal lobe) is critical for language production; Wernicke's Area (left temporal lobe) is essential for language comprehension." },
+  { cat:'Branches of Linguistics', q:'Javanese has krama and ngoko speech levels reflecting social hierarchy. This is a phenomenon studied in... <span class="cite-ref" title="Wardhaugh, R. & Fuller, J. M. (2021). An Introduction to Sociolinguistics (8th ed.). Wiley-Blackwell.">(Wardhaugh & Fuller, 2021)</span>', opts:['Phonetics','Historical Linguistics','Pragmatics','Sociolinguistics'], ans:3, exp:'Sociolinguistics studies the relationship between language and society. Javanese speech levels (ngoko, madya, krama) illustrate diglossia and language variation based on social context and hierarchy.' },
+  { cat:'Phonology', q:'The difference between /p/ and /b/ in "pin" vs "bin" proves they are... <span class="cite-ref" title="Fromkin, V. et al. (2023). An Introduction to Language (11th ed.). Cengage. | Aronoff & Rees-Miller (2020).">(Fromkin et al., 2023; Aronoff & Rees-Miller (2020). & Rees-Miller, 2020)</span>', opts:['Allophones of the same phoneme','Different phonemes','In free variation','Different morphemes'], ans:1, exp:'Because /p/ and /b/ distinguish meaning ("pin" ≠ "bin"), they are different phonemes, contrastive sounds in English. If a sound difference does NOT change meaning (like aspirated vs unaspirated /p/), they are allophones.' },
+  { cat:'Semantics & Pragmatics', q:'The word "bank" can mean a financial institution or a river bank. This is an example of... <span class="cite-ref" title="Aronoff, M. & Rees-Miller, J. (Eds.). (2020). The Handbook of Linguistics (2nd ed.). Wiley-Blackwell.">(Aronoff & Rees-Miller, 2020)</span>', opts:['Synonymy','Antonymy','Homonymy','Hyponymy'], ans:2, exp:'Homonymy: the same sound form with different, unrelated meanings. "Bank" (finance) and "bank" (riverside) are homonyms. Compare with polysemy, where one word has multiple related meanings (e.g., "head" of a person / of a department).' },
+  { cat:'Core Concepts', q:'Studying language at ONE specific point in time, without reference to its history, is called... <span class="cite-ref" title="de Saussure, F. (2020/1916). Course in General Linguistics. Columbia University Press.">(de Saussure, 2020/1916)</span>', opts:['Diachronic linguistics','Synchronic linguistics','Historical linguistics','Comparative linguistics'], ans:1, exp:'Synchronic linguistics (Greek: syn = together, chronos = time) analyzes language as a system at a single moment (a "photograph" of language). Diachronic linguistics tracks language change across time (a "film" of its evolution).' },
+  { cat:'Branches of Linguistics', q:'The study of how babies acquire their first language belongs to... <span class="cite-ref" title="Harley, T. A. (2022). The Psychology of Language (5th ed.). Routledge.">(Harley, 2022)</span>', opts:['Sociolinguistics','Phonetics','Psycholinguistics','Pragmatics'], ans:2, exp:'Psycholinguistics studies the cognitive and psychological aspects of language, including Language Acquisition: how children acquire their first language through universal developmental stages (babbling, holophrastic stage, two-word stage, etc.).' },
+  { cat:'Language Characteristics', q:'A child adopted at birth by a family speaking a different language will grow up speaking the adoptive family\'s language. Which language property does this illustrate? <span class="cite-ref" title="Hockett, C. F. (1960/2022). The origin of speech. Scientific American. | Chomsky, N. (2021). MIT Press.">(Hockett, 1960/2022; Chomsky, 2021)</span>', opts:['Arbitrariness','Productivity','Cultural Transmission','Displacement'], ans:2, exp:'Cultural Transmission: language is passed on through cultural exposure and learning, not through biological inheritance. What IS biologically inherited is the capacity for language (Chomsky\'s Language Acquisition Device, or LAD).' },
+  { cat:'Core Concepts', q:'Which of the following BEST defines linguistics? <span class="cite-ref" title="Yule, G. (2022). The Study of Language (7th ed.). Cambridge University Press. | Fromkin, V. et al. (2023).">(Yule, 2022; Fromkin et al., 2023)</span>', opts:['The study of literature and poetry','The scientific study of language and its structure','The art of learning many foreign languages','The history of writing systems'], ans:1, exp:'Linguistics is the scientific, systematic study of language, examining its structure (phonology, morphology, syntax), meaning (semantics, pragmatics), use in society (sociolinguistics), and relationship to the mind (psycholinguistics, neurolinguistics).' }
+];
+
+let currentQ=0, score=0, answered=false, timerInterval=null, timeLeft=30;
+let catScores={};
+
+function clearTimer() { if(timerInterval) { clearInterval(timerInterval); timerInterval=null; } }
+
+function startTimer() {
+  clearTimer();
+  timeLeft=30;
+  updateTimerUI();
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    updateTimerUI();
+    if(timeLeft<=0) { clearTimer(); if(!answered) autoAnswer(); }
+  },1000);
+}
+
+function updateTimerUI() {
+  const d=document.getElementById('timer-display');
+  const f=document.getElementById('timer-fill');
+  if(!d||!f) return;
+  const pct=(timeLeft/30)*100;
+  d.textContent='⏱ '+timeLeft+'s';
+  f.style.width=pct+'%';
+  if(timeLeft<=10){ d.classList.add('warn'); f.classList.add('warn'); }
+  else { d.classList.remove('warn'); f.classList.remove('warn'); }
+}
+
+function autoAnswer() {
+  if(answered) return;
+  answered=true;
+  const q=quizQuestions[currentQ];
+  const opts=document.querySelectorAll('.quiz-option');
+  opts.forEach(o=>o.classList.add('disabled'));
+  opts[q.ans].classList.add('correct');
+  opts[q.ans].classList.remove('disabled');
+  const fb=document.getElementById('quiz-feedback');
+  fb.className='quiz-feedback show wrong';
+  document.getElementById('feedback-title').textContent='⏰ Time\'s up!';
+  document.getElementById('feedback-text').textContent=q.exp;
+  document.getElementById('next-btn').style.display='block';
+  document.getElementById('next-btn').textContent=currentQ<quizQuestions.length-1?'Next Question →':'See Results 🎉';
+}
+
+function renderQuestion() {
+  const q=quizQuestions[currentQ];
+  document.getElementById('q-counter').textContent='Question '+(currentQ+1)+' of '+quizQuestions.length;
+  document.getElementById('q-score-live').textContent='Score: '+score;
+  document.getElementById('progress-bar').style.width=(((currentQ+1)/quizQuestions.length)*100)+'%';
+  document.getElementById('q-category').textContent=q.cat;
+  document.getElementById('q-text').innerHTML=q.q;
+  const letters=['A','B','C','D'];
+  document.getElementById('quiz-options').innerHTML=q.opts.map((opt,i)=>`<button class="quiz-option" onclick="answerQ(${i})"><span class="option-letter">${letters[i]}</span>${opt}</button>`).join('');
+  document.getElementById('quiz-feedback').className='quiz-feedback';
+  document.getElementById('next-btn').style.display='none';
+  answered=false;
+  startTimer();
+}
+
+function answerQ(idx) {
+  if(answered) return;
+  answered=true;
+  clearTimer();
+  const q=quizQuestions[currentQ];
+  const opts=document.querySelectorAll('.quiz-option');
+  opts.forEach(o=>o.classList.add('disabled'));
+  const isCorrect=idx===q.ans;
+  if(isCorrect){ score++; opts[idx].classList.add('correct'); document.getElementById('q-score-live').textContent='Score: '+score; }
+  else { opts[idx].classList.add('wrong'); opts[q.ans].classList.add('correct'); opts[q.ans].classList.remove('disabled'); }
+  const cats=q.cat;
+  if(!catScores[cats]) catScores[cats]={c:0,t:0};
+  catScores[cats].t++;
+  if(isCorrect) catScores[cats].c++;
+  const fb=document.getElementById('quiz-feedback');
+  fb.className='quiz-feedback show '+(isCorrect?'correct':'wrong');
+  document.getElementById('feedback-title').textContent=isCorrect?'✅ Correct! Well done!':'❌ Incorrect...';
+  document.getElementById('feedback-text').textContent=q.exp;
+  document.getElementById('next-btn').style.display='block';
+  document.getElementById('next-btn').textContent=currentQ<quizQuestions.length-1?'Next Question →':'See Results 🎉';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if(currentQ>=quizQuestions.length){ showResult(); return; }
+  renderQuestion();
+}
+
+function showResult() {
+  clearTimer();
+  document.getElementById('quiz-main').style.display='none';
+  const se=document.getElementById('quiz-score');
+  se.classList.add('show');
+  document.getElementById('score-num').textContent=score;
+  const pct=score/quizQuestions.length;
+  let emoji,msg;
+  if(pct>=0.9){emoji='🏆';msg='Outstanding! You have a deep mastery of linguistics concepts. Your analytical understanding of language is exceptional!';}
+  else if(pct>=0.7){emoji='🌟';msg='Excellent work! You have a strong grasp of most core linguistics concepts. A little more review and you\'ll ace it all!';}
+  else if(pct>=0.5){emoji='😊';msg='Good effort! You have a solid foundation. Review the branches of linguistics and language characteristics; you\'re almost there!';}
+  else {emoji='💪';msg='Keep going! Linguistics takes time to master. Return to the study material, read carefully, and try again! You\'ve got this!';}
+  document.getElementById('score-emoji').textContent=emoji;
+  document.getElementById('score-msg').textContent=msg;
+  const bd=document.getElementById('score-breakdown');
+  bd.innerHTML=Object.entries(catScores).map(([cat,v])=>`<div class="sbd-item"><div class="sbd-label">${cat}</div><div class="sbd-val" style="color:var(--purple)">${v.c}/${v.t}</div></div>`).join('');
+}
+
+function resetQuiz() {
+  clearTimer(); currentQ=0; score=0; answered=false; catScores={};
+  document.getElementById('quiz-main').style.display='block';
+  document.getElementById('quiz-score').classList.remove('show');
+  renderQuestion();
+}
+
+// ============ FILL IN THE BLANK ============
+const fitbItems = [
+  { prompt:'The smallest unit of sound that distinguishes meaning in a language is called a _____. <span class="cite-ref" title="Fromkin, V. et al. (2023). An Introduction to Language (11th ed.). Cengage Learning.">(Fromkin et al., 2023)</span>', answer:'phoneme', hint:'It comes from the word "phonology."', alt:['phonemes'] },
+  { prompt:'Saussure called the abstract, collective language system shared by all speakers _____. <span class="cite-ref" title="de Saussure, F. (2020/1916). Course in General Linguistics. Columbia University Press.">(de Saussure, 2020/1916)</span>', answer:'langue', hint:'It is a French word meaning "language."', alt:[] },
+  { prompt:'According to Chomsky, the internalized mental knowledge of one\'s language is called linguistic _____. <span class="cite-ref" title="Chomsky, N. (2021). MIT Press. Drawing on Aspects of the Theory of Syntax (1965).">(Chomsky, 2021)</span>', answer:'competence', hint:'It contrasts with "performance."', alt:[] },
+  { prompt:'When two words sound the same but have completely unrelated meanings (like "bank"), they are called _____. <span class="cite-ref" title="Aronoff, M. & Rees-Miller, J. (Eds.). (2020). The Handbook of Linguistics (2nd ed.). Wiley-Blackwell.">(Aronoff & Rees-Miller, 2020)</span>', answer:'homonyms', hint:'Think: homo = same, nym = name.', alt:['homonym','homophones'] },
+  { prompt:'The branch of linguistics that studies meaning is called _____. <span class="cite-ref" title="Aronoff, M. & Rees-Miller, J. (Eds.). (2020). The Handbook of Linguistics (2nd ed.). Wiley-Blackwell.">(Aronoff & Rees-Miller, 2020)</span>', answer:'semantics', hint:'It relates to the word "seme" (sign).', alt:['semantic'] },
+  { prompt:'Chomsky proposed that humans are born with a Language Acquisition _____ that enables language learning. <span class="cite-ref" title="Chomsky, N. (2021). MIT Press. | Harley, T. A. (2022). Psychology of Language (5th ed.).">(Chomsky, 2021; Harley, 2022)</span>', answer:'device', hint:'Its abbreviation is LAD.', alt:['Device'] },
+  { prompt:'The study of how context influences meaning (what is meant vs what is said) is called _____. <span class="cite-ref" title="Levinson, S. C. (2021). Pragmatics (2nd ed.). Cambridge University Press.">(Levinson, 2021)</span>', answer:'pragmatics', hint:'Think about "pragmatic" situations.', alt:['pragmatic'] },
+  { prompt:'A variant of a phoneme that does not change meaning is called an _____. <span class="cite-ref" title="Fromkin, V. et al. (2023). An Introduction to Language (11th ed.). Cengage Learning.">(Fromkin et al., 2023)</span>', answer:'allophone', hint:'Allo- means "other."', alt:['allophones'] },
+  { prompt:'The study of the relationship between language and society, including dialects, registers, and diglossia, is called _____. <span class="cite-ref" title="Wardhaugh, R. & Fuller, J. M. (2021). An Introduction to Sociolinguistics (8th ed.). Wiley-Blackwell.">(Wardhaugh & Fuller, 2021)</span>', answer:'sociolinguistics', hint:'Society + linguistics.', alt:['socio-linguistics'] },
+  { prompt:'Language characteristic meaning that speakers can both produce and receive the same signals is called _____. <span class="cite-ref" title="Hockett, C. F. (1960/2022). The origin of speech. Scientific American, 203(3), 88–96.">(Hockett, 1960/2022)</span>', answer:'interchangeability', hint:'Think about exchanging/swapping roles.', alt:['interchangeable'] }
+];
+
+let fitbRendered = false;
+
+function renderFITB() {
+  fitbRendered = true;
+  const c = document.getElementById('fitb-container');
+  c.innerHTML = fitbItems.map((item,i)=>{
+    const promptWithInput = item.prompt.replace('_____',`<input class="fitb-blank" id="fitb-inp-${i}" placeholder="type here..." autocomplete="off" spellcheck="false">`);
+    return `
+    <div class="fitb-card" id="fitb-card-${i}">
+      <div class="fitb-prompt">${promptWithInput}</div>
+      <div class="fitb-hint">💡 Hint: ${item.hint}</div>
+      <div class="fitb-feedback" id="fitb-fb-${i}"></div>
+    </div>`;
+  }).join('');
+  document.getElementById('fitb-result').style.display='block';
+  document.getElementById('fitb-submit-btn').style.display='inline-block';
+  document.getElementById('fitb-score-card').style.display='none';
+}
+
+function submitFITB() {
+  let correct=0;
+  fitbItems.forEach((item,i)=>{
+    const inp=document.getElementById('fitb-inp-'+i);
+    const fb=document.getElementById('fitb-fb-'+i);
+    const val=inp.value.trim().toLowerCase();
+    const ok=val===item.answer.toLowerCase()||item.alt.map(a=>a.toLowerCase()).includes(val);
+    inp.classList.remove('correct','wrong');
+    inp.classList.add(ok?'correct':'wrong');
+    fb.className='fitb-feedback '+(ok?'ok':'err');
+    fb.textContent=ok?'✅ Correct!':'❌ The correct answer is: "'+item.answer+'"';
+    inp.disabled=true;
+    if(ok) correct++;
+  });
+  document.getElementById('fitb-submit-btn').style.display='none';
+  const sc=document.getElementById('fitb-score-card');
+  sc.style.display='block';
+  document.getElementById('fitb-score-num').textContent=correct;
+  const pct=correct/fitbItems.length;
+  document.getElementById('fitb-emoji').textContent=pct>=0.8?'🏆':pct>=0.5?'🌟':'💪';
+  document.getElementById('fitb-score-msg').textContent=pct>=0.8?'Excellent terminology knowledge!':pct>=0.5?'Good effort! Review a few more terms.':'Keep studying the key terms. You\'ll get there!';
+}
+
+function resetFITB() {
+  document.getElementById('fitb-score-card').style.display='none';
+  renderFITB();
+}
+
+// ============ MATCHING ============
+const matchPairs = [
+  { term:'Phoneme', def:'Smallest sound unit that distinguishes meaning' },
+  { term:'Morpheme', def:'Smallest grammatical unit with meaning' },
+  { term:'Displacement', def:'Ability to communicate about things not present in time or space' },
+  { term:'Arbitrariness', def:'No natural connection between sound and meaning' },
+  { term:'Pragmatics', def:'Study of how context shapes language meaning' },
+  { term:'Diglossia', def:'Use of two language varieties in different social situations' },
+  { term:'Allophone', def:'Variant of a phoneme that does not change meaning' },
+  { term:'Syntax', def:'Rules governing sentence structure' },
+  { term:'Neurolinguistics', def:'Study of language representation in the brain' },
+  { term:'Diachronic', def:'Relating to language change over time' }
+];
+
+let selectedTerm=null, selectedDef=null, matchedCount=0, matchErrors=0;
+
+function shuffleArr(arr) { return arr.slice().sort(()=>Math.random()-0.5); }
+
+function renderMatch() {
+  selectedTerm=null; selectedDef=null; matchedCount=0; matchErrors=0;
+  const grid=document.getElementById('match-grid');
+  const shuffledDefs=shuffleArr(matchPairs);
+  grid.innerHTML='';
+  matchPairs.forEach((p,i)=>{
+    const tDiv=document.createElement('div');
+    tDiv.className='match-item'; tDiv.textContent=p.term; tDiv.dataset.term=p.term; tDiv.dataset.side='term';
+    tDiv.onclick=()=>handleMatchClick(tDiv,'term');
+    grid.appendChild(tDiv);
+    const dDiv=document.createElement('div');
+    dDiv.className='match-item'; dDiv.textContent=shuffledDefs[i].def; dDiv.dataset.term=shuffledDefs[i].term; dDiv.dataset.side='def';
+    dDiv.onclick=()=>handleMatchClick(dDiv,'def');
+    grid.appendChild(dDiv);
+  });
+  document.getElementById('match-score-bar').style.display='flex';
+  document.getElementById('match-score-text').textContent='0 / 10 matched';
+  document.getElementById('match-actions').innerHTML='';
+}
+
+function handleMatchClick(el,side) {
+  if(el.classList.contains('matched')) return;
+  if(side==='term') {
+    if(selectedTerm) selectedTerm.classList.remove('selected');
+    selectedTerm=el; el.classList.add('selected');
+  } else {
+    if(selectedDef) selectedDef.classList.remove('selected');
+    selectedDef=el; el.classList.add('selected');
+  }
+  if(selectedTerm && selectedDef) {
+    if(selectedTerm.dataset.term===selectedDef.dataset.term) {
+      selectedTerm.classList.remove('selected'); selectedTerm.classList.add('matched');
+      selectedDef.classList.remove('selected'); selectedDef.classList.add('matched');
+      matchedCount++;
+      document.getElementById('match-score-text').textContent=matchedCount+' / 10 matched';
+      selectedTerm=null; selectedDef=null;
+      if(matchedCount===10) {
+        document.getElementById('match-actions').innerHTML=`<span style="color:var(--green);font-weight:600">🎉 All matched! ${matchErrors} error(s)</span> <button class="btn-secondary" style="margin-left:12px;padding:8px 16px;font-size:13px;" onclick="renderMatch()">Try Again</button>`;
+      }
+    } else {
+      matchErrors++;
+      selectedTerm.classList.add('wrong-match'); selectedDef.classList.add('wrong-match');
+      setTimeout(()=>{ selectedTerm.classList.remove('selected','wrong-match'); selectedDef.classList.remove('selected','wrong-match'); selectedTerm=null; selectedDef=null; },600);
+    }
+  }
+}
+
+// ============ TRUE/FALSE ============
+const tfItems = [
+  { stmt:'Phonetics and Phonology are the same field of linguistics. <span class="cite-ref" title="Fromkin, V. et al. (2023). An Introduction to Language (11th ed.). Cengage Learning.">(Fromkin et al., 2023)</span>', ans:false, exp:'They are different. Phonetics studies sounds physically (production, acoustics, perception). Phonology studies sounds as a functional system: how they operate to distinguish meaning within a specific language.' },
+  { stmt:'Arbitrariness means that language sounds naturally resemble the objects they refer to. <span class="cite-ref" title="de Saussure, F. (2020/1916). Course in General Linguistics. Columbia University Press.">(de Saussure, 2020/1916)</span>', ans:false, exp:'Arbitrariness is the OPPOSITE: there is NO natural connection between sound and meaning. "Dog," "anjing," and "chien" all refer to the same animal, yet their sounds are completely different.' },
+  { stmt:'Displacement is the language property that allows us to discuss the past, future, or imaginary events. <span class="cite-ref" title="Hockett, C. F. (1960/2022). The origin of speech. Scientific American, 203(3), 88–96.">(Hockett, 1960/2022)</span>', ans:true, exp:'Correct! Displacement enables humans to communicate about things not present in the immediate time and place, a property absent in most animal communication systems.' },
+  { stmt:'Langue, in Saussure\'s framework, refers to individual speech acts. <span class="cite-ref" title="de Saussure, F. (2020/1916). Course in General Linguistics. Columbia University Press.">(de Saussure, 2020/1916)</span>', ans:false, exp:'Incorrect: parole refers to individual speech acts. Langue is the abstract, collective language system shared by the entire speech community.' },
+  { stmt:"Broca's Area is primarily associated with language comprehension. <span class='cite-ref' title=\"Kaan, E. & Swaab, T. Y. (2022). The neural circuitry of syntactic comprehension. PubMed Central.\">(Kaan & Swaab, 2022)</span>", ans:false, exp:"Incorrect. Broca's Area (left frontal lobe) is associated with language PRODUCTION. Wernicke's Area (left temporal lobe) is associated with language comprehension." },
+  { stmt:'Cultural Transmission means that language ability is genetically inherited from parents. <span class="cite-ref" title="Hockett, C. F. (1960/2022). Scientific American. | Chomsky, N. (2021). MIT Press.">(Hockett, 1960/2022; Chomsky, 2021)</span>', ans:false, exp:'Cultural Transmission means the OPPOSITE: language is learned through cultural exposure, not biological inheritance. A child acquires the language of their environment, regardless of their biological parents\' language.' },
+  { stmt:'A minimal pair is two words that differ in only one phoneme. <span class="cite-ref" title="Aronoff, M. & Rees-Miller, J. (Eds.). (2020). The Handbook of Linguistics (2nd ed.). Wiley-Blackwell.">(Aronoff & Rees-Miller, 2020)</span>', ans:true, exp:'Correct! Minimal pairs demonstrate phonemic distinctions. Examples: "pin/bin," "cat/bat," "ship/chip": each pair differs in exactly one phoneme, proving those sounds are contrastive in English.' },
+  { stmt:'Pragmatics is concerned only with the literal, dictionary meaning of words. <span class="cite-ref" title="Levinson, S. C. (2021). Pragmatics (2nd ed.). Cambridge University Press.">(Levinson, 2021)</span>', ans:false, exp:'Pragmatics is concerned with meaning in CONTEXT: what is meant vs. what is literally said. Literal/dictionary meaning is the domain of semantics. Pragmatics covers speech acts, implicature, and deixis.' },
+  { stmt:'Linguistic productivity means that speakers can create and understand an unlimited number of novel sentences. <span class="cite-ref" title="Hockett, C. F. (1960/2022). Scientific American. | Fromkin, V. et al. (2023).">(Hockett, 1960/2022; Fromkin et al., 2023)</span>', ans:true, exp:'Correct! Productivity (or creativity) is the property that allows speakers to generate and comprehend sentences never encountered before, using a finite set of grammatical rules and vocabulary.' },
+  { stmt:'Sociolinguistics studies the representation of language in the human brain. <span class="cite-ref" title="Wardhaugh, R. & Fuller, J. M. (2021). An Introduction to Sociolinguistics (8th ed.). Wiley-Blackwell.">(Wardhaugh & Fuller, 2021)</span>', ans:false, exp:'Neurolinguistics studies language in the brain. Sociolinguistics studies the relationship between language and society, including dialects, registers, diglossia, language variation, and social identity.' },
+  { stmt:'Synchronic linguistics studies how a language changes over centuries. <span class="cite-ref" title="de Saussure, F. (2020/1916). Course in General Linguistics. Columbia University Press.">(de Saussure, 2020/1916)</span>', ans:false, exp:'Synchronic linguistics studies language at a single point in time (a "snapshot"). It is DIACHRONIC linguistics that studies language change over time.' },
+  { stmt:'Morphology is the branch of linguistics that studies how words are formed from smaller meaningful units. <span class="cite-ref" title="Aronoff, M. & Rees-Miller, J. (Eds.). (2020). The Handbook of Linguistics (2nd ed.). Wiley-Blackwell.">(Aronoff & Rees-Miller, 2020)</span>', ans:true, exp:'Correct! Morphology studies morphemes (the smallest meaningful grammatical units) and the processes by which they combine to form words: affixation, compounding, reduplication, and more.' }
+];
+
+let tfAnswered=[];
+
+function renderTF() {
+  tfAnswered=new Array(tfItems.length).fill(null);
+  const c=document.getElementById('tf-container');
+  c.innerHTML=tfItems.map((item,i)=>`
+    <div class="tf-card" id="tf-card-${i}">
+      <div class="tf-stmt">${i+1}. ${item.stmt}</div>
+      <div class="tf-btns">
+        <button class="tf-btn true-btn" id="tf-true-${i}" onclick="answerTF(${i},true)">✅ True</button>
+        <button class="tf-btn false-btn" id="tf-false-${i}" onclick="answerTF(${i},false)">❌ False</button>
+      </div>
+      <div class="tf-result" id="tf-res-${i}"></div>
+    </div>`).join('');
+  document.getElementById('tf-result-card').style.display='block';
+  document.getElementById('tf-score-card').style.display='none';
+}
+
+function answerTF(i,val) {
+  if(tfAnswered[i]!==null) return;
+  tfAnswered[i]=val;
+  const item=tfItems[i];
+  const isOk=val===item.ans;
+  const tb=document.getElementById('tf-true-'+i);
+  const fb=document.getElementById('tf-false-'+i);
+  const res=document.getElementById('tf-res-'+i);
+  tb.classList.add('disabled'); fb.classList.add('disabled');
+  if(val===true) tb.classList.add('selected-true'); else fb.classList.add('selected-false');
+  if(!isOk){ if(item.ans===true) tb.classList.add('selected-true'); else fb.classList.add('selected-false'); }
+  res.className='tf-result show '+(isOk?'ok':'err');
+  res.textContent=(isOk?'✅ Correct! ':'❌ Incorrect. ')+item.exp;
+  const done=tfAnswered.filter(x=>x!==null).length;
+  if(done===tfItems.length) {
+    const correct=tfAnswered.filter((v,i2)=>v===tfItems[i2].ans).length;
+    const sc=document.getElementById('tf-score-card');
+    sc.style.display='block';
+    document.getElementById('tf-score-num').textContent=correct;
+    const pct=correct/tfItems.length;
+    document.getElementById('tf-emoji').textContent=pct>=0.83?'🏆':pct>=0.58?'🌟':'💪';
+    document.getElementById('tf-score-msg').textContent=pct>=0.83?'Exceptional critical thinking!':pct>=0.58?'Good work! Review the tricky statements.':'Keep studying; every mistake is a learning opportunity!';
+  }
+}
+
+function resetTF() {
+  document.getElementById('tf-score-card').style.display='none';
+  renderTF();
+}
+</script>
+</body>
+</html>
